@@ -6,6 +6,7 @@ import numpy as np
 from scipy import misc, ndimage
 import matplotlib.pyplot as plt
 
+plt.rcParams['font.family'] = ['Simsun']
 
 class MyPosition:
     # 图片路径
@@ -35,6 +36,7 @@ class MyPosition:
         构造函数,需要传入原始图片路径
         :param name: 原始图片路径
         """
+        plt.rcParams['font.family'] = ['Simsun']
         # 读取原始图片
         self.img = cv2.imread(name)
         # 重置图片尺寸
@@ -56,6 +58,7 @@ class MyPosition:
         :param img: 去噪图片,建议直接采用self.img
         :return:
         """
+        plt.rcParams['font.family'] = ['Simsun']
         # 加入图片
         self.img = img
 
@@ -103,6 +106,7 @@ class MyPosition:
         原名字是: `getProfile`, 做一次记录
         :return: 返回车牌所在区域图片
         """
+        plt.rcParams['font.family'] = ['Simsun']
         # 寻找边界
         # 依据图片[self.closed:闭操作处理结果图];
         # 轮廓提取模式[RETR_LIST:提取所有轮廓];
@@ -125,9 +129,9 @@ class MyPosition:
         # 下面是测试代码,用于绘制图形,
         # 在原图的复制品中绘制矩形,
         # 复制原图,避免损坏原图; 将 box 的信息包装到列表中; -1表示绘制所有轮廓; 设定轮廓颜色; 设定轮廓粗细
-        Final_img = cv2.drawContours(self.img.copy(), [box], -1, (0, 0, 255), 3)
+        final_img = cv2.drawContours(self.img.copy(), [box], -1, (0, 0, 255), 3)
         # cv2 展示图片
-        cv2.imshow('final_img', Final_img)
+        cv2.imshow('final img with max contour drawn on', final_img)
         # 获取box的四个顶点坐标
         up = max(min(box[i][1] for i in range(4)), 0)
         down = min(max(box[i][1] for i in range(4)), self.len_x)
@@ -146,11 +150,12 @@ class MyPosition:
         该函数用于展示处理过程的每一个步骤的处理结果
         :return:
         """
+        plt.rcParams['font.family'] = ['Simsun']
         # 如果经过处理之后的图像大小与原始图像大小不一致，则输出提示信息表示处理未完成。
         if self.closed.shape[:2] != self.img.shape[:2]:
             print("没有处理完成", self.closed.shape, self.img.shape)
         # 设置plt的字体参数
-        plt.rcParams['font.family'] = ['SimHei']
+        plt.rcParams['font.family'] = ['Simsun']
         # plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
         titles = [u"原图(BGR格式)", '灰度图', '高斯降噪',
                   '中值滤波', '边缘检测', '二值化',
@@ -172,6 +177,7 @@ class MyPosition:
         用于旋转的函数
         :return:
         """
+        plt.rcParams['font.family'] = ['Simsun']
         # 将车牌区域如片转为灰度图
         gray = cv2.cvtColor(self.result, cv2.COLOR_BGR2GRAY)
         # Canny边缘检测
@@ -215,21 +221,31 @@ if __name__ == '__main__':
     """
     下面是一个调用demo,用作测试
     """
+    plt.rcParams['font.family'] = ['Simsun']
     # 创建实例,并且传入图片位置
-    pos = MyPosition('./demo.jpg')
-
+    # pos是创建出来的实例
+    pos = MyPosition('./test5.jpg')
     # 去噪处理
     pos.remove_noise(pos.img)
-
-    #
+    # 找到车牌位置
+    # get profile 得到的是车牌的位置，即现在的img保存的是车牌照片
     img = pos.get_profile()
+    # 输出处理过程
     pos.get_details()
-    cv2.imshow('img1', img)
-    cv2.waitKey(0)
+    # 展示如片
+    cv2.imshow('plate area after process 1', img)
+    cv2.waitKey(0)  # 避免cv展示图片闪退
+    # 旋转车牌区域图片
     img = pos.Rotate()
+    # 车牌图片去噪声
     pos.remove_noise(img)
+    # 新图片重新获取车牌区域
     img = pos.get_profile()
+    # 输出处理过程
     pos.get_details()
-    cv2.imshow('img2', img)
+    # 展示图片
+    cv2.imshow('plate area after process 2', img)
+    # 保存图片
     pos.save()
+    # 等待用户处理
     cv2.waitKey(0)
