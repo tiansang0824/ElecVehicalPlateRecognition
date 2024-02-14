@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 
 plt.rcParams['font.family'] = ['Simsun']
 
+
 class MyPosition:
     # 图片路径
     imgName = ''
@@ -215,6 +216,7 @@ class MyPosition:
 
     def save(self):
         cv2.imwrite(self.positionPath + self.positionName, self.img)
+        # cv2.imwrite(self.positionPath + self.positionName, self.img)
 
 
 if __name__ == '__main__':
@@ -235,12 +237,11 @@ if __name__ == '__main__':
     - test15: 略微完美
     - test16: 略微完美
     - test17: 略微完美
-    - test18: 
     """
     plt.rcParams['font.family'] = ['Simsun']
     # 创建实例,并且传入图片位置
     # pos是创建出来的实例
-    pos = MyPosition('./images/test16.jpg')
+    pos = MyPosition('./images/test12.jpg')
     # 去噪处理
     pos.remove_noise(pos.img)
     # 找到车牌位置
