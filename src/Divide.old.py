@@ -67,8 +67,6 @@ class MyDivide:
         @todo: 二值图转换函数可以优化，这里先放放。
         :return:
         """
-
-
         GrayImageF1, self.binary = cv2.threshold(self.gray, 127, 255, cv2.THRESH_BINARY_INV)
         return self.binary
 
@@ -165,7 +163,7 @@ class MyDivide:
 
 
 if __name__ == '__main__':
-    divide = MyDivide('test12-pos.png')
+    divide = MyDivide('test12-1-pos.png')
     divide.Bgr2Gray()
     divide.Gray2Binary()
     divide.Binary2Array()

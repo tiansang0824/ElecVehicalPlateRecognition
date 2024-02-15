@@ -69,6 +69,8 @@ class MyPosition:
         # 高斯平滑 去噪声
         # 去噪图片,卷积核(高斯核)宽高,x/y方向的标准差,边界填充方法(默认:使用图像边界像素填充)
         self.gaussian = cv2.GaussianBlur(self.gray, (3, 3), 0, 0, cv2.BORDER_DEFAULT)
+        # 去除椒盐噪声
+        self.gaussian = cv2.medianBlur(self.gaussian, 5)
 
         # 中值滤波
         self.median = cv2.medianBlur(self.gaussian, 5)
@@ -215,7 +217,7 @@ class MyPosition:
         return rotate_img
 
     def save(self):
-        cv2.imwrite(self.positionPath + self.positionName, self.img)
+        cv2.imwrite(self.positionPath + self.positionName, self.result)
         # cv2.imwrite(self.positionPath + self.positionName, self.img)
 
 
@@ -241,7 +243,7 @@ if __name__ == '__main__':
     plt.rcParams['font.family'] = ['Simsun']
     # 创建实例,并且传入图片位置
     # pos是创建出来的实例
-    pos = MyPosition('./images/test12.jpg')
+    pos = MyPosition('./images/test12-1.jpg')
     # 去噪处理
     pos.remove_noise(pos.img)
     # 找到车牌位置
