@@ -16,13 +16,16 @@ class MyDivide(object):
     data = []  # 用于以数组的形式保存图片
     len_x = []  # x方向长度
     len_y = []  # y方向长度
-    rowPairs = []
+    row_pairs = []  # 竖直方向切割后包含字符的行信息集合
+    col_pairs = []  # 水平方向切割后包含字符的列信息集合
 
     rows = []  # 行数
     cols = []  # 列数
 
-    # 下面的几个属性主要用于竖直方向切割的时候用。
+    # 下面的属性主要用于竖直方向切割的时候用。
     min_val = 15  # 最小密度，用于筛除较大的噪点
+
+    #
 
     def __init__(self, name):
         self.imgName = name  # 读取图片名
@@ -31,7 +34,7 @@ class MyDivide(object):
 
         x = self.img.shape[0]  # 获取图片rows
         y = self.img.shape[1]  # 获取图片cols
-        self.rowPairs = []  # 原始变量名是 rowPairs
+        self.row_pairs = []  # 原始变量名是 rowPairs
 
         # 对于太小的图片进行放大
         """
@@ -95,14 +98,14 @@ class MyDivide(object):
 
     def line_seg(self):
         """
-        函数lineSeg, 从二维数组中检测线段的起始和结束位置，并将这些位置存储在rowPairs列表中。
+        函数lineSeg, 从二维数组中检测线段的起始和结束位置，并将这些位置存储在row_pairs列表中。
         :return:
         """
         # 初始化变量start_i和end_i，它们用于存储线段的起始和结束位置的行索引。
         start_i = -1
         end_i = -1
-        # 初始化空列表rowPairs，用于存储检测到的线段的起始和结束位置的行索引对。
-        self.rowPairs = []
+        # 初始化空列表row_pairs，用于存储检测到的线段的起始和结束位置的行索引对。
+        self.row_pairs = []
 
         def judge(line_data, length):
             """
@@ -129,11 +132,111 @@ class MyDivide(object):
                 if end_i - start_i >= self.min_val:
                     # 判断是否大于最小的字符高度
                     # self.min_val是实例内的常数（min_val = 10）用于避免切分噪音
-                    self.rowPairs.append((start_i, end_i))  # 如果大于最小高度，则视作是字符段，追加到self.rowPairs中。
+                    self.row_pairs.append((start_i, end_i))  # 如果大于最小高度，则视作是字符段，追加到self.row_pairs中。
                 start_i = -1  # 重置起始位置（行号）
                 end_i = -1  # 重置结束位置（行号）
 
-        print(f'self.rowPairs: {self.rowPairs}')  # 测试代码，输出截取到的字符区域（竖直方向）
+        print(f'self.row_pairs: {self.row_pairs}')  # 测试代码，输出截取到的字符区域（竖直方向）
+
+    def col_seg(self):
+        """
+        该函数用于将切分后的含有车牌字符的行集合进行水平方向切分，从而将每个字符所在区域划分为单一的图片
+        :return:
+        """
+        print('接下来进入col_seg()函数所在范围')  # 测试代码，标记代码执行进度
+        # 首先检查self.row_pair是否只含有一个元素（是否准确查找到字符所在行集合）
+        if len(self.row_pairs) > 1:
+            # 垂直分割后得到不止一个集合
+            # 只留下最大的集合
+            max_row_len = 0  # 标记最大集合包含行数
+            for segment in self.row_pairs:
+                # 该轮循环用于查找到最大的row_len
+                if segment[1] - segment[0] > max_row_len:
+                    max_row_len = segment[1] - segment[0]  # 为最大row_len赋值
+            for segment in self.row_pairs:
+                # 第二轮循环，用于删除非最大的row_len所在集合
+                if segment[1] - segment[0] < max_row_len:
+                    self.row_pairs.remove(segment)  # 删除所在的segment
+        # 然后从二值图截取self.row_pairs标记的行集合
+        binary_copy = self.binary.copy()
+        start_row = self.row_pairs[0][0]  # 起始行
+        end_row = self.row_pairs[0][1]  # 结束行
+        binary_copy = binary_copy[start_row:end_row, :]  # 获取垂直分割后的含有字符的行集合
+        cv2.imshow('binary_copy, contains string', binary_copy)
+        cv2.waitKey(0)
+        """
+        到这里为止，binary_copy就是只含有字符的行集合组成的图片。
+        接下来裁剪每个字符所在的列
+        列裁剪的大致步骤如下：
+        1. 根据copy图片获得竖直方向的直方图；
+        2. 处理直方图，去掉小噪点；
+        -  注意：去除噪点后的直方图，分割后获取到的元素中，第一个和最后一个是是车牌框留下的黑色像素点，需要剔除掉
+        3. 分割并获取列集合
+        4. 剔除首尾车牌框的集合
+        四个步骤结束后，接客完成字符分割
+        """
+        # 1. 获取直方图
+        [rows, cols] = binary_copy.shape
+        print(f'binary_copy.shape: {rows, cols}')  # 测试代码
+        # 二值统计,统计每一列的黑值（0）的个数
+        black_nums = []  # black_num 用于保存每一列上包含的黑色像素点个数
+        for col in range(cols):
+            res = 0
+            for row in range(rows):
+                if binary_copy[row][col] == 0:
+                    res = res + 1
+            black_nums.append(res)
+        len(black_nums)
+        max(black_nums)
+        # 2. 筛选直方图
+        black_sum = 0  # 黑色像素点加和
+        one_third_point = int(sum(black_nums) / len(black_nums) / 3) + 1  # 三分之一点(+1是为了向上取整)
+        print(f'三分之一点：{one_third_point}')  # 测试代码；直方图三分之一点
+        # 简单筛选
+        for i in range(cols):
+            if black_nums[i] < one_third_point:
+                black_nums[i] = 0
+        # 画出柱状图
+        y = black_nums  # 点个数
+        x = [x for x in range(cols)]  # 列数
+        plt.bar(x, y, color='black', width=1)
+        # 设置x，y轴标签
+        plt.xlabel('col')
+        plt.ylabel('0_number')
+        # 设置刻度
+        plt.xticks([x for x in range(0, cols, 10)])
+        plt.yticks([y for y in range(0, max(black_nums) + 5, 5)])
+        plt.rcParams['font.sans-serif'] = ['SimHei']  # SimHei是黑体的意思
+        # plt.rcParams['font.family'] = ''   # 中文不乱码
+        plt.title('直方图')
+        plt.show()
+        # 3. 根据直方图获取每个单字符的列集合
+        self.col_pairs = []  # 对列集合置空
+        # 找所有不为0的区间(列数)
+        reg = []
+        for i in range(cols - 1):
+            if black_nums[i] == 0 and black_nums[i + 1] != 0:
+                # 该列为零，但是下一列不为零，这是区间的起始点
+                reg.append(i)
+            if black_nums[i] != 0 and black_nums[i + 1] == 0:
+                # 该列不为零但是下一列为零，这是区间的结束点。
+                reg.append(i + 2)
+            if len(reg) == 2:
+                # 判断是否记录了一个完整区间
+                if (reg[1] - reg[0]) > 5:  # 限定区间长度要大于5(可以更大),过滤掉不需要的点
+                    self.col_pairs.append(reg)
+                    reg = []
+                else:
+                    reg = []
+        # 4. 剔除首尾车牌框位置
+        self.col_pairs = self.col_pairs[1:-1]
+        # 测试代码
+        for i in range(len(self.col_pairs)):
+            tmp_image = self.binary[self.row_pairs[0][0]:self.row_pairs[0][1],
+                 self.col_pairs[i][0]:self.col_pairs[i][1]]
+            cv2.imshow(f'test_char: {i}', tmp_image)  # 测试代码
+            cv2.waitKey(0)
+        # 5.
 
     def show_details(self):
         cv2.imshow("img", self.img)  # 展示图片
@@ -147,7 +250,7 @@ class MyDivide(object):
         输出数值方向的切片结果
         :return:
         """
-        for pair in self.rowPairs:
+        for pair in self.row_pairs:
             # pair表示每一个配对
             start_row = pair[0]
             end_row = pair[1]
@@ -162,4 +265,9 @@ if __name__ == '__main__':
     md.gray2binary()  # 转换成二值图
     md.binary2array()  # 转换成数组
     md.line_seg()  # 切分字符位置
-    md.show_vertical_segment()  # 测试代码：输出竖直切分后的图片部分
+    # md.show_vertical_segment()  # 测试代码：输出竖直切分后的图片部分
+    """
+    line_seg()执行完毕后，self.row_pairs就保存了字符所在的行数，
+    接下来就是对这个行的集合进行水平方向分割。
+    """
+    md.col_seg()

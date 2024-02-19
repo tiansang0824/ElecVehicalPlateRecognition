@@ -239,6 +239,10 @@ if __name__ == '__main__':
     - test15: 略微完美
     - test16: 略微完美
     - test17: 略微完美
+    
+    可实际实用的图片（可完美实现车牌识别图片）：
+    - test12-1 
+    - 
     """
     plt.rcParams['font.family'] = ['Simsun']
     # 创建实例,并且传入图片位置
