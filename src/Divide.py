@@ -232,6 +232,11 @@ class MyDivide(object):
         self.col_pairs = self.col_pairs[1:]
         # 【不要整段删除】测试代码，输出测试车牌字符，顺便保存到本地目录内。
         for i in range(len(self.col_pairs)):
+            # 当遇到数字1的时候，图片宽度过小，所以进行筛选和修正
+            if (self.col_pairs[i][1] - self.col_pairs[i][0]) < 20:
+                self.col_pairs[i][1] += 8
+                self.col_pairs[i][0] -= 8
+            # 从临时图片中裁剪字符区域
             tmp_image = self.binary[self.row_pairs[0][0]:self.row_pairs[0][1],
                         self.col_pairs[i][0]:self.col_pairs[i][1]]
             cv2.imshow(f'test_char: {i}', tmp_image)  # 测试代码
@@ -243,7 +248,12 @@ class MyDivide(object):
             print(f"char image save path: {save_path}")  # 输出测试图片保存位置
             # 保存图片
             cv2.imwrite(save_path, tmp_image)  # 保存字符图片
-        # 5. 基本完成
+        # 5. 基本完成（下面是一个补充步骤，用于预备好字符串图片）
+        tmp_image = self.binary[self.row_pairs[0][0] - 5:self.row_pairs[0][1] + 5,
+                    self.col_pairs[0][0] - 2: self.col_pairs[len(self.col_pairs) - 1][1] + 2]
+        cv2.imshow('test: string area', tmp_image)
+        cv2.waitKey(0)
+        cv2.imwrite(self.dividePath + f'{self.imgName}-string.jpg', tmp_image)
 
     def show_details(self):
         cv2.imshow("img", self.img)  # 展示图片
