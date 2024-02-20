@@ -9,6 +9,7 @@ import os
 import numpy as np
 from PIL import Image
 
+
 def read_dir(dir_name):
     """
     读取一个文件夹下的所有文件
@@ -20,7 +21,7 @@ def read_dir(dir_name):
         # print(f'file name: {filename}')  # 测试代码
         # img = cv2.imread(dir_name + '/' + filename)  # 测试代码：图片路径
         refer_img_list.append(dir_name + '/' + filename)
-    print(f'指定文件夹下的文件有：{refer_img_list}')  # 测试代码，输出指定文件夹下检查到的所有文件
+    # print(f'指定文件夹下的文件有：{refer_img_list}')  # 测试代码，输出指定文件夹下检查到的所有文件
     return refer_img_list
 
 
@@ -36,6 +37,7 @@ def reverse_img_color(img):
     # 使用 bitwise_not 函数反转图像像素
     inverted_image = cv2.bitwise_not(img)  # 调用cv2的函数进行反转
     return inverted_image  # 返回反转后的图片
+
 
 class Mather(object):
     imgName = ''  # 图片读取位置
@@ -61,6 +63,19 @@ class Mather(object):
         """
         best_score = []  # 匹配度列表
         words = []  # 模板图片列表
+        # 读取所有模板
+        for i in range(len(self.template)):
+            # print(self.template[i])  # 测试代码，该代码可以输出全部template的内容
+            word = read_dir('./refer/' + self.template[i])  # 读取这一轮循环下的全部文件的文件路径
+            words.append(word)  # 将读取到的模板图片路径添加到words中。
+        # print(f'words: {words[11]}')  # 测试代码
+        # 进行模板匹配
+        for word in words:
+            score = []
+            for w in word:
+                # fromfile() 函数读回数据时需要用户指定元素类型，并对数组的形状进行适当修改
+                template_img = cv2.imdecode(np.fromfile(w, dtype=np.uint8), 1)  # 读取图片
+            # todo: 继续进行模板匹配
 
     def match_multiple_chars(self):
         """
@@ -71,10 +86,18 @@ class Mather(object):
 
 
 if __name__ == '__main__':
-    read_dir('./divide/test12')
-
+    # read_dir('./divide/test12')  # 测试代码：读取指定目录下所有文件的文件路径
+    """ 测试代码：反转二值图的黑白像素点
     test_img = cv2.imread('./divide/test12/test12-1.jpg')  # 读取测试图片
     test_img = reverse_img_color(test_img)  # 测试反转像素的函数
     cv2.imshow('test12', test_img)
     cv2.waitKey(0)
-
+    """
+    """ 测试代码：读取所有模板图片
+    test_img = cv2.imread('./divide/test12/test12-1.jpg')
+    m = Mather('test12')
+    m.match_single_char(test_img)
+    """
+    test_img = cv2.imread('./divide/test12/test12-1.jpg')
+    m = Mather('test12')
+    m.match_single_char(test_img)
