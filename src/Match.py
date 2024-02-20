@@ -7,7 +7,7 @@ import cv2
 from matplotlib import pyplot as plt
 import os
 import numpy as np
-
+from PIL import Image
 
 def read_dir(dir_name):
     """
@@ -24,6 +24,19 @@ def read_dir(dir_name):
     return refer_img_list
 
 
+def reverse_img_color(img):
+    """
+    该函数用于反转图片的黑白像素。
+
+    该函数通过将图片转换成数组，然后通过取反运算符，将黑白像素反转，
+    最后利用PIL.Image的函数将数组还原为图片，并且通过return返回。
+
+    :return:  返回反转后的图片。
+    """
+    # 使用 bitwise_not 函数反转图像像素
+    inverted_image = cv2.bitwise_not(img)  # 调用cv2的函数进行反转
+    return inverted_image  # 返回反转后的图片
+
 class Mather(object):
     imgName = ''  # 图片读取位置
 
@@ -35,7 +48,7 @@ class Mather(object):
     def __init__(self, name):
         self.imgName = name  # 读取图片位置（文件夹）
 
-    def match_single_char(self):
+    def match_single_char(self, char_img):
         """
         该函数用于模板匹配单个字符，并且返回匹配结果（仅含有一个字符的字符串变量）
         :return:
@@ -47,6 +60,7 @@ class Mather(object):
         - 对比每一个模板和目标字符的匹配程度
         """
         best_score = []  # 匹配度列表
+        words = []  # 模板图片列表
 
     def match_multiple_chars(self):
         """
@@ -58,3 +72,9 @@ class Mather(object):
 
 if __name__ == '__main__':
     read_dir('./divide/test12')
+
+    test_img = cv2.imread('./divide/test12/test12-1.jpg')  # 读取测试图片
+    test_img = reverse_img_color(test_img)  # 测试反转像素的函数
+    cv2.imshow('test12', test_img)
+    cv2.waitKey(0)
+
