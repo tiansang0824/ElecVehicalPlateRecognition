@@ -9,6 +9,21 @@ import os
 import numpy as np
 
 
+def read_dir(dir_name):
+    """
+    读取一个文件夹下的所有文件
+    :param dir_name: 文件夹名称、路径
+    :return: 返回一个集合，包含指定文件夹下所有文件的路径（字符串）
+    """
+    refer_img_list = []  # 图片列表
+    for filename in os.listdir(dir_name):
+        # print(f'file name: {filename}')  # 测试代码
+        # img = cv2.imread(dir_name + '/' + filename)  # 测试代码：图片路径
+        refer_img_list.append(dir_name + '/' + filename)
+    print(f'指定文件夹下的文件有：{refer_img_list}')  # 测试代码，输出指定文件夹下检查到的所有文件
+    return refer_img_list
+
+
 class Mather(object):
     imgName = ''  # 图片读取位置
 
@@ -33,11 +48,13 @@ class Mather(object):
         """
         best_score = []  # 匹配度列表
 
-
-
     def match_multiple_chars(self):
         """
         该函数用于匹配车牌分割后的字符。
         :return:
         """
         pass
+
+
+if __name__ == '__main__':
+    read_dir('./divide/test12')
