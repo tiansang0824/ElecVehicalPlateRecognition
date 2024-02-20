@@ -2,13 +2,13 @@
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
-import scipy
+import os
 
 
 class MyDivide(object):
     imgName = ''  # 保存图片名
     imgPath = './position/'  # 图片路径
-    dividePath = ('./divide/')  # 分割图片的保存位置
+    dividePath = './divide/'  # 分割图片的保存位置
 
     img = []
     gray = []  # 用于保存灰度图
@@ -229,14 +229,21 @@ class MyDivide(object):
                 else:
                     reg = []
         # 4. 剔除首尾车牌框位置
-        self.col_pairs = self.col_pairs[1:-1]
-        # 测试代码
+        self.col_pairs = self.col_pairs[1:]
+        # 【不要整段删除】测试代码，输出测试车牌字符，顺便保存到本地目录内。
         for i in range(len(self.col_pairs)):
             tmp_image = self.binary[self.row_pairs[0][0]:self.row_pairs[0][1],
-                 self.col_pairs[i][0]:self.col_pairs[i][1]]
+                        self.col_pairs[i][0]:self.col_pairs[i][1]]
             cv2.imshow(f'test_char: {i}', tmp_image)  # 测试代码
-            cv2.waitKey(0)
-        # 5.
+            cv2.waitKey(0)  # 测试代码
+            # 确保目标文件夹存在
+            os.makedirs(self.dividePath, exist_ok=True)
+            # 合成保存路径
+            save_path = self.dividePath + f'{self.imgName}-{i}.jpg'
+            print(f"char image save path: {save_path}")  # 输出测试图片保存位置
+            # 保存图片
+            cv2.imwrite(save_path, tmp_image)  # 保存字符图片
+        # 5. 基本完成
 
     def show_details(self):
         cv2.imshow("img", self.img)  # 展示图片
@@ -260,7 +267,7 @@ class MyDivide(object):
 
 
 if __name__ == '__main__':
-    md = MyDivide('test12-1')  # 通过图片名读取图片
+    md = MyDivide('test12')  # 通过图片名读取图片
     md.bgr2gray()  # 转换成灰度图
     md.gray2binary()  # 转换成二值图
     md.binary2array()  # 转换成数组
