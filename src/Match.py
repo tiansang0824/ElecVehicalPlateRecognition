@@ -50,7 +50,7 @@ class Mather(object):
     def __init__(self, name):
         self.imgName = name  # 读取图片位置（文件夹）
 
-    def match_single_char(self, char_img):
+    def match_single_char(self):
         """
         该函数用于模板匹配单个字符，并且返回匹配结果（仅含有一个字符的字符串变量）
         :return:
@@ -61,6 +61,7 @@ class Mather(object):
         - 通过两层循环读取所有模板
         - 对比每一个模板和目标字符的匹配程度
         """
+        char_img = cv2.imdecode(np.fromfile(self.imgName, dtype=np.uint8), 1)  # 以合适的方式从文件读取图片
         best_score = []  # 匹配度列表
         words = []  # 模板图片列表
         # 读取所有模板
@@ -68,14 +69,32 @@ class Mather(object):
             # print(self.template[i])  # 测试代码，该代码可以输出全部template的内容
             word = read_dir('./refer/' + self.template[i])  # 读取这一轮循环下的全部文件的文件路径
             words.append(word)  # 将读取到的模板图片路径添加到words中。
-        # print(f'words: {words[11]}')  # 测试代码
+        # print(f'words: {words[11]}')  # 测试代码，这里会返回第11个字符的所有模板图片的相对路径
+        """
+        注意：
+        现在的words 保存的是所有数字和字母的模板图片路径，
+        其中，words的每一个元素都是一个列表，该列表包含了某一个字符的所有模板图片路径。
+        """
         # 进行模板匹配
         for word in words:
             score = []
             for w in word:
                 # fromfile() 函数读回数据时需要用户指定元素类型，并对数组的形状进行适当修改
                 template_img = cv2.imdecode(np.fromfile(w, dtype=np.uint8), 1)  # 读取图片
-            # todo: 继续进行模板匹配
+                template_img = cv2.cvtColor(template_img, cv2.COLOR_BGR2GRAY)
+                ret, template_img = cv2.threshold(template_img, 0, 255, cv2.THRESH_OTSU)
+                cv2.imshow('template_img', template_img)  # 测试代码
+                cv2.waitKey(0)
+                height, width = template_img.shape
+                tmp_char_img = char_img.copy()  # 避免改变原图片
+                tmp_char_img = (tmp_char_img * 255).astype(np.uint8)  # 将原图副本修改为符合模板匹配的8位无符号整型数
+                tmp_char_img = cv2.resize(tmp_char_img, (width, height))  # 重置图片宽度高度
+                cv2.imshow('img', char_img)
+                cv2.waitKey(0)
+                result = cv2.matchTemplate(tmp_char_img, template_img, cv2.TM_CCOEFF)  # 返回值越大，相似度越高
+                score.append(result[0][0])  # 追加匹配结果
+            best_score.append(max(score))  # 将最高匹配结果作为该字符的匹配结果，追加到best_score中
+        print(f'best_score: {best_score}')
 
     def match_multiple_chars(self):
         """
@@ -98,6 +117,6 @@ if __name__ == '__main__':
     m = Mather('test12')
     m.match_single_char(test_img)
     """
-    test_img = cv2.imread('./divide/test12/test12-1.jpg')
+    test_img = cv2.imread('D:\project\田桑的车牌识别项目\src\divide\test12\test12-1.jpg')
     m = Mather('test12')
-    m.match_single_char(test_img)
+    m.match_single_char()
