@@ -117,6 +117,7 @@ if __name__ == '__main__':
     m = Mather('test12')
     m.match_single_char(test_img)
     """
-    test_img = cv2.imread('D:\project\田桑的车牌识别项目\src\divide\test12\test12-1.jpg')
-    m = Mather('test12')
+    test_img = cv2.imread('./divide/test12/test12-1.jpg')
+    m = Mather('./divide/test12/test12-1.jpg')
+    print(m.imgName)
     m.match_single_char()
