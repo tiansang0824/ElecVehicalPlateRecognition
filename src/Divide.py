@@ -237,8 +237,8 @@ class MyDivide(object):
                 self.col_pairs[i][1] += 8
                 self.col_pairs[i][0] -= 8
             # 从临时图片中裁剪字符区域
-            tmp_image = self.binary[self.row_pairs[0][0]:self.row_pairs[0][1],
-                        self.col_pairs[i][0]:self.col_pairs[i][1]]
+            tmp_image = self.img[self.row_pairs[0][0]:self.row_pairs[0][1],
+                        self.col_pairs[i][0]-1:self.col_pairs[i][1]+1]
             cv2.imshow(f'test_char: {i}', tmp_image)  # 测试代码
             cv2.waitKey(0)  # 测试代码
             # 确保目标文件夹存在
