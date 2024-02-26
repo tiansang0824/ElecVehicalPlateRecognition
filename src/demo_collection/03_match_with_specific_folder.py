@@ -8,7 +8,7 @@ import os
 import tool_kit_show_img as my_tools
 
 """读取和处理字符图片"""
-char_img_path = '../divide/test12/test12-1.jpg'  # 字符图片路径
+char_img_path = '../divide/test12/test12-0.jpg'  # 字符图片路径
 char_img = cv2.imdecode(np.fromfile(char_img_path, dtype=np.uint8), 1)  # 从路径中读取图片
 char_img = cv2.GaussianBlur(char_img, (3, 3), 0)  # 高斯去噪
 char_img = cv2.cvtColor(char_img, cv2.COLOR_BGR2GRAY)  # 转换为灰度图
@@ -18,7 +18,7 @@ ret, char_img = cv2.threshold(char_img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_O
 my_tools.plt_show_gray(cv2.resize(char_img, (20, 20)))
 
 """获取所有模板路径"""
-templ_img_path = '../refer/2'  # 模板图片总路径
+templ_img_path = '../refer/M'  # 模板图片总路径
 templ_img_list = my_tools.read_dir(templ_img_path)  # 创建列表
 
 """测试输出所有模板路径"""

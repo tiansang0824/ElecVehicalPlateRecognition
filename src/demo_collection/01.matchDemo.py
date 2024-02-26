@@ -8,7 +8,7 @@ from tool_kit_show_img import *
 
 char_img_path = '../divide/test12/test12-0.jpg'  # 字符图片路径
 # templ_img_path = '../refer/M/m_02.jpg'  # 模板图片路径 3572736
-templ_img_path = '../refer/A/a_04.jpg'  # 模板图片路径
+templ_img_path = '../refer/M/demo1001.jpg'  # 模板图片路径
 char_img = cv2.imdecode(np.fromfile(char_img_path, dtype=np.uint8), 1)  # 读取字符图片
 templ_img = cv2.imdecode(np.fromfile(templ_img_path, dtype=np.uint8), 1)  # 读取模板图片
 
