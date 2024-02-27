@@ -69,6 +69,8 @@ class MyDivide(object):
         灰度图转换成二值图
         :return:
         """
+
+
         ret, self.binary = cv2.threshold(self.gray, 127, 255, cv2.THRESH_BINARY_INV)
 
         cv2.imshow('binary image', self.binary)  # 测试代码：输出二值图
@@ -277,7 +279,7 @@ class MyDivide(object):
 
 
 if __name__ == '__main__':
-    md = MyDivide('test12')  # 通过图片名读取图片
+    md = MyDivide('img02')  # 通过图片名读取图片
     md.bgr2gray()  # 转换成灰度图
     md.gray2binary()  # 转换成二值图
     md.binary2array()  # 转换成数组

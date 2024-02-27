@@ -97,7 +97,7 @@ class Matcher:
 
 
 if __name__ == '__main__':
-    m = Matcher('./divide/test12')
+    m = Matcher('./divide/test01')
     print(m.char_img_path_list)
     # m.single2all('./divide/test12/test12-4.jpg', './refer/')
     m.match_all()
