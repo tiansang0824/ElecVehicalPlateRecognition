@@ -233,6 +233,9 @@ class MyDivide(object):
                 self.col_pairs.append(reg)
                 reg = []
                 break
+            elif i == 0 and black_nums[i] != 0:
+                # 第一列
+                reg.append(i)
             if len(reg) == 2:
                 # 判断是否记录了一个完整区间
                 if (reg[1] - reg[0]) > 5:  # 限定区间长度要大于5(可以更大),过滤掉不需要的点
@@ -290,11 +293,11 @@ class MyDivide(object):
 
 
 if __name__ == '__main__':
-    md = MyDivide('img02')  # 通过图片名读取图片
+    md = MyDivide('img05')  # 通过图片名读取图片
     md.bgr2gray()  # 转换成灰度图
     md.gray2binary()  # 转换成二值图
     md.binary2array()  # 转换成数组
-    md.line_seg()  # 切分字符位置
+    md .line_seg()  # 切分字符位置
     # md.show_vertical_segment()  # 测试代码：输出竖直切分后的图片部分
     """
     line_seg()执行完毕后，self.row_pairs就保存了字符所在的行数，
