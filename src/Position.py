@@ -247,7 +247,7 @@ if __name__ == '__main__':
     plt.rcParams['font.family'] = ['Simsun']
     # 创建实例,并且传入图片位置
     # pos是创建出来的实例
-    pos = MyPosition('./images/img02.jpg')
+    pos = MyPosition('./images/test01.jpg')
     # 去噪处理
     pos.remove_noise(pos.img)
     # 找到车牌位置

@@ -70,8 +70,10 @@ class MyDivide(object):
         :return:
         """
 
+        average_gray = np.mean(self.gray)
+        ret, self.binary = cv2.threshold(self.gray, average_gray, 255, cv2.THRESH_BINARY_INV)
 
-        ret, self.binary = cv2.threshold(self.gray, 127, 255, cv2.THRESH_BINARY_INV)
+        # ret, self.binary = cv2.threshold(self.gray, 127, 255, cv2.THRESH_BINARY_INV)
 
         cv2.imshow('binary image', self.binary)  # 测试代码：输出二值图
         cv2.waitKey(0)  # waitKey
@@ -188,15 +190,15 @@ class MyDivide(object):
                 if binary_copy[row][col] == 0:
                     res = res + 1
             black_nums.append(res)
-        len(black_nums)
-        max(black_nums)
+        # len(black_nums)
+        # max(black_nums)
         # 2. 筛选直方图
         black_sum = 0  # 黑色像素点加和
-        one_third_point = int(sum(black_nums) / len(black_nums) / 3) + 1  # 三分之一点(+1是为了向上取整)
-        print(f'三分之一点：{one_third_point}')  # 测试代码；直方图三分之一点
+        one_fourth_point = int(sum(black_nums) / len(black_nums) / 4) + 1  # 三分之一点(+1是为了向上取整)
+        print(f'三分之一点：{one_fourth_point}')  # 测试代码；直方图三分之一点
         # 简单筛选
         for i in range(cols):
-            if black_nums[i] < one_third_point:
+            if black_nums[i] < one_fourth_point:
                 black_nums[i] = 0
         # 画出柱状图
         y = black_nums  # 点个数
@@ -218,11 +220,19 @@ class MyDivide(object):
         reg = []
         for i in range(cols - 1):
             if black_nums[i] == 0 and black_nums[i + 1] != 0:
-                # 该列为零，但是下一列不为零，这是区间的起始点
+                # 该列为零，但是下一列不为零，这是区间的起始点：black_nums[i] == 0 and black_nums[i + 1] != 0
+                # 该列不为零，但是前一列为零，那么前一列是起点
                 reg.append(i)
-            if black_nums[i] != 0 and black_nums[i + 1] == 0:
-                # 该列不为零但是下一列为零，这是区间的结束点。
+            elif black_nums[i] != 0 and black_nums[i + 1] == 0:
+                # 该列不为零但是下一列为零，这是区间的结束点：black_nums[i] != 0 and black_nums[i + 1] == 0：reg.append(i + 2)
+                # 该列为零，但是前一列不为零，那么该列的下一列作结束点
                 reg.append(i + 2)
+            elif i == (cols - 2) and black_nums[i] != 0 and len(reg) == 1:
+                # 最后一列
+                reg.append(i)
+                self.col_pairs.append(reg)
+                reg = []
+                break
             if len(reg) == 2:
                 # 判断是否记录了一个完整区间
                 if (reg[1] - reg[0]) > 5:  # 限定区间长度要大于5(可以更大),过滤掉不需要的点
@@ -230,8 +240,9 @@ class MyDivide(object):
                     reg = []
                 else:
                     reg = []
+            print(f'reg: {reg}')  # 测试代码
         # 4. 剔除首尾车牌框位置
-        self.col_pairs = self.col_pairs[1:]
+        self.col_pairs = self.col_pairs[1:-1]
         # 【不要整段删除】测试代码，输出测试车牌字符，顺便保存到本地目录内。
         for i in range(len(self.col_pairs)):
             # 当遇到数字1的时候，图片宽度过小，所以进行筛选和修正
@@ -240,7 +251,7 @@ class MyDivide(object):
                 self.col_pairs[i][0] -= 8
             # 从临时图片中裁剪字符区域
             tmp_image = self.img[self.row_pairs[0][0]:self.row_pairs[0][1],
-                        self.col_pairs[i][0]-1:self.col_pairs[i][1]+1]
+                        self.col_pairs[i][0] - 1:self.col_pairs[i][1] + 1]
             cv2.imshow(f'test_char: {i}', tmp_image)  # 测试代码
             cv2.waitKey(0)  # 测试代码
             # 确保目标文件夹存在
