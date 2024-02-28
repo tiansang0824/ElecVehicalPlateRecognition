@@ -267,6 +267,22 @@ class MyDivide(object):
         # 5. 基本完成（下面是一个补充步骤，用于预备好字符串图片）
         tmp_image = self.binary[self.row_pairs[0][0] - 5:self.row_pairs[0][1] + 5,
                     self.col_pairs[0][0] - 2: self.col_pairs[len(self.col_pairs) - 1][1] + 2]
+        """
+        left_value = 0
+        right_value = 0
+
+        if self.col_pairs[0][0] - 2 <= 0:
+            left_value = 0
+        else:
+            left_value = self.col_pairs[0][0] - 2
+
+        if (self.col_pairs[len(self.col_pairs) - 1][1] + 2) >= self.binary.shape[1]:
+            right_value = self.binary.shape[1]
+        else:
+            left_value = (self.col_pairs[len(self.col_pairs) - 1][1] + 2)
+
+        tmp_image = self.binary[self.row_pairs[0][0] - 5:self.row_pairs[0][1] + 5, left_value: right_value]
+        """
         cv2.imshow('test: string area', tmp_image)
         cv2.waitKey(0)
         cv2.imwrite(self.dividePath + f'{self.imgName}-string.jpg', tmp_image)
@@ -293,11 +309,11 @@ class MyDivide(object):
 
 
 if __name__ == '__main__':
-    md = MyDivide('img05')  # 通过图片名读取图片
+    md = MyDivide('img23')  # 通过图片名读取图片
     md.bgr2gray()  # 转换成灰度图
     md.gray2binary()  # 转换成二值图
     md.binary2array()  # 转换成数组
-    md .line_seg()  # 切分字符位置
+    md.line_seg()  # 切分字符位置
     # md.show_vertical_segment()  # 测试代码：输出竖直切分后的图片部分
     """
     line_seg()执行完毕后，self.row_pairs就保存了字符所在的行数，
