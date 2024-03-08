@@ -104,6 +104,17 @@ class DBConnector:
         self._conn.commit()
         print('车牌信息添加完毕')
 
+    def add_relation(self, uid: int, pid: int):
+        """
+        添加人车关系的函数。
+        该函数的主要流程如下：
+
+        :param uid:
+        :param pid:
+        :return:
+        """
+        pass
+
 
 if __name__ == '__main__':
     con = DBConnector(
