@@ -12,7 +12,7 @@ class User:
     _phone = None
     _email = None
 
-    def __init__(self, uid: int, uname: str, gender: Gender, org: str, phone: str, email: str) -> None:
+    def __init__(self, uname: str, gender: Gender, org: str, phone: str, email: str, uid=None) -> None:
         self.uid = uid
         self.uname = uname
         self.gender = gender

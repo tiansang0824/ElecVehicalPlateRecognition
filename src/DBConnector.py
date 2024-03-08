@@ -21,8 +21,8 @@
 - (x) 通过id查询车主信息；
 - 通过电话号查询车主信息；
 - 通过车牌号查询车主信息；
-- 通过id查询车牌信息；
-- 通过车主信息查询车牌信息；
+- (x) 通过id查询车牌信息；
+- 通过车主电话号查询车牌信息；
 
 """
 from pymysql import Connection
@@ -89,6 +89,14 @@ class DBConnector:
         # print(f'result: {result}')
         return make_plate(result)
 
+    def add_user(self, user_info: User):
+        g = "M" if user_info.gender == Gender.MALE else "F"
+        sql = (f"insert into t_user(uname, gender, org, phone, email) "
+               f"values('{user_info.uname}', '{g}', '{user_info.org}', '{user_info.phone}', '{user_info.email}')")
+        # print(sql)
+        self._cursor.execute(sql)
+        self._conn.commit()
+
 
 if __name__ == '__main__':
     con = DBConnector(
@@ -104,3 +112,6 @@ if __name__ == '__main__':
     print(f'通过车牌号查找车主信息：{u.uname, u.gender, u.org, u.phone, u.email}', end='\n\n')
     p = con.select_plate_by_user_phone('15703417063')
     print(f'通过电话号查找车牌信息：{p.pnum, p.remark}')
+
+    u = User(uname='田桑', gender=Gender.MALE, org="自软", phone='15703417063', email="zhanghaotian0824@qq.com")
+    con.add_user(u)
