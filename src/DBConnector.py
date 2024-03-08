@@ -96,6 +96,13 @@ class DBConnector:
         # print(sql)
         self._cursor.execute(sql)
         self._conn.commit()
+        print('用户信息添加完毕')
+
+    def add_plate(self, plate_info: Plate):
+        sql = f"insert into t_plate(pnum, remark) values('{plate_info.pnum}', '{plate_info.remark}')"
+        self._cursor.execute(sql)
+        self._conn.commit()
+        print('车牌信息添加完毕')
 
 
 if __name__ == '__main__':
@@ -112,6 +119,9 @@ if __name__ == '__main__':
     print(f'通过车牌号查找车主信息：{u.uname, u.gender, u.org, u.phone, u.email}', end='\n\n')
     p = con.select_plate_by_user_phone('15703417063')
     print(f'通过电话号查找车牌信息：{p.pnum, p.remark}')
-
+    # 添加用户测试
     u = User(uname='田桑', gender=Gender.MALE, org="自软", phone='15703417063', email="zhanghaotian0824@qq.com")
     con.add_user(u)
+    # 添加车牌信息测试
+    p = Plate('qwerty', '测试用的remark字段')
+    con.add_plate(p)

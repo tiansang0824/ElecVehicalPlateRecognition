@@ -3,7 +3,7 @@ class Plate:
     _pnum: str = None
     _remark: str = None
 
-    def __init__(self, pid, pnum, remark):
+    def __init__(self, pnum: str, remark: str, pid=None):
         self._pid = pid
         self._pnum = pnum
         self._remark = remark
