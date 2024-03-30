@@ -309,7 +309,7 @@ class MyDivide(object):
 
 
 if __name__ == '__main__':
-    md = MyDivide('img23')  # 通过图片名读取图片
+    md = MyDivide('test01')  # 通过图片名读取图片
     md.bgr2gray()  # 转换成灰度图
     md.gray2binary()  # 转换成二值图
     md.binary2array()  # 转换成数组
