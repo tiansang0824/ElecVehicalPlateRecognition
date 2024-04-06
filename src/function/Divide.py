@@ -7,8 +7,8 @@ import os
 
 class MyDivide(object):
     imgName = ''  # 保存图片名
-    imgPath = './position/'  # 图片路径
-    dividePath = './divide/'  # 分割图片的保存位置
+    imgPath = '../position/'  # 图片路径
+    dividePath = '../divide/'  # 分割图片的保存位置
 
     img = []
     gray = []  # 用于保存灰度图

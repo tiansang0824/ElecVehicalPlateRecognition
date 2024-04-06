@@ -6,6 +6,6 @@ from match import *
 
 root = Tk()
 # Login(root)
-Match(root)
+# Match(root)
 
 root.mainloop()

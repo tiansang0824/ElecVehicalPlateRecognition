@@ -21,7 +21,7 @@ class Matcher:
     templates = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                  'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
                  'W', 'X', 'Y', 'Z']
-    templ_path = './refer/'  # 模板图片路径
+    templ_path = '../refer/'  # 模板图片路径
     char_img_path_list = ''  # 字符图片路径
     answer = ''
 
@@ -97,7 +97,7 @@ class Matcher:
 
 
 if __name__ == '__main__':
-    m = Matcher('./divide/test01')
+    m = Matcher('../divide/test01')
     print(m.char_img_path_list)
     # m.single2all('./divide/test12/test12-4.jpg', './refer/')
     m.match_all()
