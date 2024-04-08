@@ -4,6 +4,9 @@ from tkinter import ttk
 from tkinter import messagebox
 import re
 
+from src.base.Interface import Interface
+from src.gui.Match import Match
+
 
 class Login:
     frm = None
@@ -28,24 +31,41 @@ class Login:
         self.create_login()
 
     def login_ok(self):
+        """
+        OK 按钮的触发动作
+        :return:
+        """
         """ 获取输入 """
         username = self.entry_username.get()
         password = self.entry_password.get()
+        print(f"test_code: username: {username}, password: {password}")
         """ 判断数据合法性 """
         if username == "" or password == "":  # 先判断空数据
             print("yes, they are None")
             messagebox.showwarning("None Input", "Please enter ur username and password!")
+            return
         # 接下来判断数据是否符合用户名和密码要求
-        re_username = r'^[a-zA-Z][a-zA-Z0-9]{3,11}$'
-        re_password = r'^[\da-zA-Z]{6,12}$'
+        re_username = r'^[a-zA-Z][a-zA-Z0-9]{3,16}$'  # 3-16位字符，大写或者小写字母开头，全部由字母和数字组成。
+        re_password = r'^[\da-zA-Z]{6,12}$'  # 6-12位字符，可以是数字或者字母。
         match_username = re.match(re_username, username)
         match_password = re.match(re_password, password)
         if not match_username or not match_password:
             messagebox.showerror("error data", "Please check ur format.")
-        """ 业务逻辑 """
-        messagebox.showinfo("todo", "该检查数据库了，记得补充这里的代码")
+            return
+        # 输入无误，接下来检查数据库
+        interface = Interface()  # 创建接口
+        existed_user = interface.interface_login(username, password)  # 判断用户是否存在
+        if existed_user:
+            self.frm.destroy()
+            Match(self.root)
+        else:
+            messagebox.showerror("用户不存在", "用户不存在，检查输入数据！")
 
     def login_quit(self):
+        """
+        取消按钮的功能，直接退出程序
+        :return:
+        """
         messagebox.showinfo("quit", "close the window")
         self.frm.destroy()
         self.root.destroy()

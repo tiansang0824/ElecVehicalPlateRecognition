@@ -170,6 +170,22 @@ class DBConnector:
         self._conn.commit()
         print("更新关系信息完毕")
 
+    def select_admin_exist(self, admin_name: str, admin_pwd: str) -> bool:
+        """
+        该函数用于检查指定管理员用户是否存在
+        @param admin_name: 管理员名
+        @param admin_pwd: 管理员密码
+        :return: 存在，返回True，否则返回False
+        """
+        sql = f"select * from t_admin where username = '{admin_name}' and password = '{admin_pwd}';"
+        self._cursor.execute(sql)
+        result = self._cursor.fetchall()
+        print(f"搜索管理员用户的结果：{result}")
+        if len(result) == 0:
+            return False
+        else:
+            return True
+
 
 if __name__ == '__main__':
     con = DBConnector(
@@ -201,3 +217,5 @@ if __name__ == '__main__':
     # 更新关系信息
     r = Relation(30006, 10006, 20009)
     con.update_relation_info(r)
+    # 搜索管理员用户
+    print(f"管理员搜索结果为：{con.select_admin_exist('admin', 'root')}")

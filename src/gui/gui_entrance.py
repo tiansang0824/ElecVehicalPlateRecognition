@@ -2,10 +2,10 @@ from tkinter import *
 from tkinter.ttk import *
 
 from login import *
-from match import *
+from Match import *
 
 root = Tk()
-# Login(root)
+Login(root)
 # Match(root)
 
 root.mainloop()

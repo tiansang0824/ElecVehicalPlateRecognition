@@ -413,7 +413,7 @@ class Match:
         self.right_remind_label = tk.Label(self.right_frm, text="双击复制牌照号码", font=("微软雅黑", 12, 'italic'))
         self.right_remind_label.pack(pady=(30, 0))
         # 创建右侧车牌号码显示框(Label模拟)
-        self.var_plate_number.set("123ABC")
+        self.var_plate_number.set("M28199")
         self.right_plate_label = tk.Label(self.right_frm, textvariable=self.var_plate_number,
                                           font=("Consolas", 14), background="white", relief="groove",
                                           width=20, height=2)
