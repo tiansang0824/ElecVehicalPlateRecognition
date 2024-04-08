@@ -4,6 +4,7 @@ from tkinter.filedialog import askopenfilename  # 用来获取用户文件路径
 from PIL import ImageTk, Image  # 用来读取图片
 import re
 from tkinter import messagebox
+from src.base.Interface import Interface
 
 
 class Match:
@@ -368,6 +369,16 @@ class Match:
         register_menu = tk.Menu(total_menubar, tearoff=0)
         total_menubar.add_command(label="关于(产品)", command=self.menu_about_product)
 
+    def fun_identify(self):
+        """
+        用来调用统一接口的一键识别函数
+        :return:
+        """
+        # 创建接口对象
+        interface = Interface()
+        identify_ret = interface.interface_identify(self.file_path)
+        print(identify_ret)
+
     def create_gui(self):
         """ 创建全部gui组件 """
         """ 创建菜单组件 """
@@ -422,7 +433,8 @@ class Match:
         btn_style = ttk.Style()
         btn_style.configure("btnStyle.TButton", font=("微软雅黑", 12), width=13)
         # 创建左侧"一键识别"按钮
-        self.left_match_btn = ttk.Button(self.left_frm, text="一键识别", style="btnStyle.TButton")
+        self.left_match_btn = ttk.Button(self.left_frm, text="一键识别", style="btnStyle.TButton",
+                                         command=self.fun_identify)
         self.left_match_btn.pack(pady=(0, 0), side=tk.LEFT, padx=(75, 0))
         # 创建左侧"详细信息"按钮
         self.left_details_btn = ttk.Button(self.left_frm, text="展示细节", style="btnStyle.TButton")

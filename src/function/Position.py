@@ -13,7 +13,7 @@ class MyPosition:
     # 图片路径
     imgName = ''
     # 保存图片路径
-    positionPath = './position/'
+    positionPath = 'D:/cache/position/'
     # 根据原图片名确定,该变量出现在构造函数中.
     positionName = ''
 
@@ -97,6 +97,7 @@ class MyPosition:
         # 第二次膨胀
         self.dilation2 = cv2.dilate(self.erosion, element2, iterations=3)
 
+        # 闭运算
         # 建立一个椭圆核函数
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (25, 25))
         # 执行图像形态学操作
