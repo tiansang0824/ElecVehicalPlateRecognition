@@ -389,6 +389,10 @@ class Match:
         # 设置显示字符
         self.var_plate_number.set(plate_number)
 
+    def fun_copy_label(self, event):
+        self.root.clipboard_clear()
+        self.root.clipboard_append(self.var_plate_number.get())
+
     def create_gui(self):
         """ 创建全部gui组件 """
         """ 创建菜单组件 """
@@ -439,6 +443,7 @@ class Match:
                                           font=("Consolas", 14), background="white", relief="groove",
                                           width=20, height=2)
         self.right_plate_label.pack(pady=(20, 0))
+        self.right_plate_label.bind("<Double-Button-1>", self.fun_copy_label)
         # 创建左侧按钮样式
         btn_style = ttk.Style()
         btn_style.configure("btnStyle.TButton", font=("微软雅黑", 12), width=13)
@@ -447,7 +452,8 @@ class Match:
                                          command=self.fun_identify)
         self.left_match_btn.pack(pady=(0, 0), side=tk.LEFT, padx=(75, 0))
         # 创建左侧"详细信息"按钮
-        self.left_details_btn = ttk.Button(self.left_frm, text="展示细节", style="btnStyle.TButton")
+        self.left_details_btn = ttk.Button(self.left_frm, text="更换图片", style="btnStyle.TButton",
+                                           command=self.menu_import_file)
         self.left_details_btn.pack(pady=(0, 0), side=tk.LEFT, padx=(25, 0))
         # 创建右侧"查找车主"按钮
         self.right_query_btn = ttk.Button(self.right_frm, text="查找车主", style="btnStyle.TButton")
