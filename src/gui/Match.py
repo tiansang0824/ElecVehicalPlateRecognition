@@ -455,6 +455,56 @@ class Match:
         label_email.grid(row=5, column=1, padx=5, pady=5)
         label_plate.grid(row=6, column=1, padx=5, pady=5)
 
+    def fun_register_plate(self):
+        """
+        该函数用于登记车牌信息
+        :return:
+        """
+
+        def sub_fun_commit_register():
+            # 提交车牌信息（主要是备注）
+            remark_text = text_remark_data.get("1.0", tk.END)
+            print(f"test-code >> 车牌备注信息是：{remark_text}")
+            interface = Interface()
+            interface.insert_insert_plate(self.var_plate_number.get(), remark_text)
+
+        # 创建子窗口
+        top_register_plate = tk.Toplevel()
+        top_register_plate.title("用户信息搜索")
+        top_register_plate.geometry("400x300+100+100")
+        top_register_plate.resizable(False, False)
+        top_register_plate.transient(self.root)
+        top_register_plate.grab_set()  # 禁止回到主窗体操作
+        # 创建标题组件
+        style_label_title = ttk.Style()
+        style_label_title.configure("styleTitle.TLabel", font=("微软雅黑", 16))
+        label_title = ttk.Label(top_register_plate, text="登记车牌", style="styleTitle.TLabel")
+        label_title.grid(row=0, column=0, columnspan=2, pady=(10, 0), padx=(60, 5))
+        # 创建标签组件
+        style_top_master = ttk.Style()
+        style_top_master.configure("styleRegisterShowLabel.TLabel", font=("微软雅黑", 13))
+        label_pnum = ttk.Label(top_register_plate, text="车牌号码：", style="styleRegisterShowLabel.TLabel")
+        label_remark = ttk.Label(top_register_plate, text="车牌备注：", style="styleRegisterShowLabel.TLabel")
+        label_pnum.grid(row=1, column=0, padx=(50, 10), pady=(10, 5))
+        label_remark.grid(row=2, column=0, padx=(50, 10), pady=5)
+        # 创建展示组件
+        style_shown_label = ttk.Style()
+        style_shown_label.configure("styleRegisterShownLabel.TLabel", font=("微软雅黑", 13),
+                                    relief="sunken", borderwidth=1, background="white", width=15)
+        label_pnum_data = ttk.Label(top_register_plate, textvariable=self.var_plate_number,
+                                    style="styleRegisterShownLabel.TLabel")
+        text_remark_data = tk.Text(top_register_plate, width=22, height=5, font=("微软雅黑", 10))
+        default_text = "默认。"  # 为文本框添加默认内容
+        text_remark_data.insert(tk.END, default_text)
+        label_pnum_data.grid(row=1, column=1, padx=5, pady=5)
+        text_remark_data.grid(row=2, column=1, padx=5, pady=5)
+        # 创建提交按钮
+        style_btn = ttk.Style()
+        style_btn.configure("styleRegisterBtn.TButton", font=("微软雅黑", 13), width=10, height=2)
+        btn_register = ttk.Button(top_register_plate, text="提交信息", style="styleRegisterBtn.TButton",
+                                  command=sub_fun_commit_register)
+        btn_register.grid(row=3, column=1, padx=5, pady=5)
+
     def create_gui(self):
         """ 创建全部gui组件 """
         """ 创建菜单组件 """
@@ -500,7 +550,7 @@ class Match:
         self.right_remind_label = tk.Label(self.right_frm, text="双击复制牌照号码", font=("微软雅黑", 12, 'italic'))
         self.right_remind_label.pack(pady=(30, 0))
         # 创建右侧车牌号码显示框(Label模拟)
-        self.var_plate_number.set("123abcccc")
+        self.var_plate_number.set("abcdefg")
         self.right_plate_label = tk.Label(self.right_frm, textvariable=self.var_plate_number,
                                           font=("Consolas", 14), background="white", relief="groove",
                                           width=20, height=2)
@@ -522,5 +572,6 @@ class Match:
                                           command=self.fun_select_master)
         self.right_query_btn.pack(side=tk.LEFT, padx=(70, 0), pady=(50, 27))
         # 创建右侧"登记车牌"按钮
-        self.right_register_btn = ttk.Button(self.right_frm, text="登记车牌", style="btnStyle.TButton")
+        self.right_register_btn = ttk.Button(self.right_frm, text="登记车牌", style="btnStyle.TButton",
+                                             command=self.fun_register_plate)
         self.right_register_btn.pack(side=tk.LEFT, padx=(25, 0), pady=(50, 27))

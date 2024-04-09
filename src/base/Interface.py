@@ -3,7 +3,7 @@ Interface 类，该类用于提供统一的功能操作接口，规范化和统�
 Interface 类，用于存储GUI界面操作中需要使用到的所有内容。
 GUI 界面的每个功能都对应 interface 中的一个函数，通过一对一调用函数来直接实现 GUI 的功能。
 """
-from src.MyBeans import User, Gender, Relation
+from src.MyBeans import User, Gender, Relation, Plate
 from src.function import Position, Divide, Match
 import src.base.DBConnector as db
 import matplotlib as plt
@@ -57,6 +57,16 @@ class Interface:
         select_result = self.unit_dbcon.select_user_by_pnum(plate_num)
         print(select_result)
         return select_result
+
+    def insert_insert_plate(self, plate_num: str, remark: str) -> None:
+        """
+        添加新的车牌信息
+        :param plate_num:
+        :param remark:
+        :return:
+        """
+        p = Plate.Plate(plate_num, remark)
+        self.unit_dbcon.add_plate(p)
 
     def interface_identify(self, file_path: str):
         """
