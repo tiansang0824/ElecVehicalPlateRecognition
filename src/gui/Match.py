@@ -376,8 +376,18 @@ class Match:
         """
         # 创建接口对象
         interface = Interface()
-        identify_ret = interface.interface_identify(self.file_path)
-        print(identify_ret)
+        identify_ret = interface.interface_identify(self.file_path)  # 调用统一接口执行车牌识别，并且获得返回值
+        print(f"车牌区域图片的绝对地址为：{identify_ret}")
+        # 获得了识别结果后，下一步就是将识别结果的图片和字符串打印到界面中
+        plate_area_path = identify_ret[0]  # 图片地址
+        plate_number = identify_ret[1]  # 识别结果
+        # 设置显示图片
+        right_show_image = Image.open(plate_area_path)
+        right_shown_img = ImageTk.PhotoImage(right_show_image.resize((300, 150)))
+        self.right_img_label.config(image=right_shown_img)
+        self.right_img_label.image = right_shown_img
+        # 设置显示字符
+        self.var_plate_number.set(plate_number)
 
     def create_gui(self):
         """ 创建全部gui组件 """
@@ -424,7 +434,7 @@ class Match:
         self.right_remind_label = tk.Label(self.right_frm, text="双击复制牌照号码", font=("微软雅黑", 12, 'italic'))
         self.right_remind_label.pack(pady=(30, 0))
         # 创建右侧车牌号码显示框(Label模拟)
-        self.var_plate_number.set("M28199")
+        self.var_plate_number.set("这里会显示识别结果")
         self.right_plate_label = tk.Label(self.right_frm, textvariable=self.var_plate_number,
                                           font=("Consolas", 14), background="white", relief="groove",
                                           width=20, height=2)
