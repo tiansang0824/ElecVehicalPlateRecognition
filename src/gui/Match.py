@@ -393,6 +393,68 @@ class Match:
         self.root.clipboard_clear()
         self.root.clipboard_append(self.var_plate_number.get())
 
+    def fun_select_master(self):
+        """
+        这个函数用来设计查找车主的功能
+        :return:
+        """
+        # 创建统一结构
+        interface = Interface()
+        master_info = None
+        try:
+            master_info = interface.interface_select_master_by_plate(self.var_plate_number.get())
+        except Exception as e:
+            print(f"错误信息：{e}")
+            messagebox.showwarning("搜索失败", "用户信息搜索失败")
+            return
+        print(f"查询到的车主信息: {master_info}")
+        # 现在的master_info是一个User类型的对象
+        # 接下来创建Topleve窗口显示User信息
+        top_master_info = tk.Toplevel()
+        top_master_info.title("查询结果")
+        top_master_info.geometry("400x300+100+100")
+        top_master_info.resizable(False, False)
+        top_master_info.transient(self.root)
+        top_master_info.grab_set()  # 禁止回到主窗体操作
+        # 设置具体内容
+        # 创建题目标签
+        style_title = ttk.Style()
+        style_title.configure("topMasterTitle.TLabel", font=("微软雅黑", 16))
+        label_title = ttk.Label(top_master_info, text="搜索结果", style="topMasterTitle.TLabel")
+        label_title.grid(row=0, column=0, columnspan=2, pady=(10, 0), padx=100)
+        # 创建标签列表
+        style_top_master = ttk.Style()
+        style_top_master.configure("topMasterShowStyle.TLabel", font=("微软雅黑", 13))
+        label_uname = ttk.Label(top_master_info, text="    用户名：", style="topMasterShowStyle.TLabel")
+        label_gender = ttk.Label(top_master_info, text="      性别：", style="topMasterShowStyle.TLabel")
+        label_org = ttk.Label(top_master_info, text="所属组织：", style="topMasterShowStyle.TLabel")
+        label_phone = ttk.Label(top_master_info, text="联系电话：", style="topMasterShowStyle.TLabel")
+        label_email = ttk.Label(top_master_info, text="联系邮箱：", style="topMasterShowStyle.TLabel")
+        label_plate = ttk.Label(top_master_info, text="车牌号码：", style="topMasterShowStyle.TLabel")
+        label_uname.grid(row=1, column=0, padx=(20, 5), pady=(10, 5))
+        label_gender.grid(row=2, column=0, padx=(20, 5), pady=5)
+        label_org.grid(row=3, column=0, padx=(20, 5), pady=5)
+        label_phone.grid(row=4, column=0, padx=(20, 5), pady=5)
+        label_email.grid(row=5, column=0, padx=(20, 5), pady=5)
+        label_plate.grid(row=6, column=0, padx=(20, 5), pady=5)
+        # 创建展示标签
+        style_top_master = ttk.Style()
+        style_top_master.configure("topMasterContentStyle.TLabel", font=("微软雅黑", 13),
+                                   relief="sunken", borderwidth=1, background="white", width=25)
+        label_uname_info = ttk.Label(top_master_info, text=master_info.uname, style="topMasterContentStyle.TLabel")
+        label_gender = ttk.Label(top_master_info, text=master_info.gender, style="topMasterContentStyle.TLabel")
+        label_org = ttk.Label(top_master_info, text=master_info.org, style="topMasterContentStyle.TLabel")
+        label_phone = ttk.Label(top_master_info, text=master_info.phone, style="topMasterContentStyle.TLabel")
+        label_email = ttk.Label(top_master_info, text=master_info.email, style="topMasterContentStyle.TLabel")
+        label_plate = ttk.Label(top_master_info, textvariable=self.var_plate_number,
+                                style="topMasterContentStyle.TLabel")
+        label_uname_info.grid(row=1, column=1, padx=5, pady=(20, 5))
+        label_gender.grid(row=2, column=1, padx=5, pady=5)
+        label_org.grid(row=3, column=1, padx=5, pady=5)
+        label_phone.grid(row=4, column=1, padx=5, pady=5)
+        label_email.grid(row=5, column=1, padx=5, pady=5)
+        label_plate.grid(row=6, column=1, padx=5, pady=5)
+
     def create_gui(self):
         """ 创建全部gui组件 """
         """ 创建菜单组件 """
@@ -438,7 +500,7 @@ class Match:
         self.right_remind_label = tk.Label(self.right_frm, text="双击复制牌照号码", font=("微软雅黑", 12, 'italic'))
         self.right_remind_label.pack(pady=(30, 0))
         # 创建右侧车牌号码显示框(Label模拟)
-        self.var_plate_number.set("这里会显示识别结果")
+        self.var_plate_number.set("123abcccc")
         self.right_plate_label = tk.Label(self.right_frm, textvariable=self.var_plate_number,
                                           font=("Consolas", 14), background="white", relief="groove",
                                           width=20, height=2)
@@ -456,7 +518,8 @@ class Match:
                                            command=self.menu_import_file)
         self.left_details_btn.pack(pady=(0, 0), side=tk.LEFT, padx=(25, 0))
         # 创建右侧"查找车主"按钮
-        self.right_query_btn = ttk.Button(self.right_frm, text="查找车主", style="btnStyle.TButton")
+        self.right_query_btn = ttk.Button(self.right_frm, text="查找车主", style="btnStyle.TButton",
+                                          command=self.fun_select_master)
         self.right_query_btn.pack(side=tk.LEFT, padx=(70, 0), pady=(50, 27))
         # 创建右侧"登记车牌"按钮
         self.right_register_btn = ttk.Button(self.right_frm, text="登记车牌", style="btnStyle.TButton")
