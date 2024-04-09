@@ -98,7 +98,21 @@ class Interface:
         self.unit_divide.line_seg()
         self.unit_divide.col_seg()
         # 最后一步进行字符模板匹配
-        # TODO: 接下来可以直接补充字符模板匹配的功能了。
+        # 先获取单字符图片位置
+        # 合成保存路径
+        save_path = self.unit_divide.dividePath
+        print(f"test code: char image save path is {save_path}")  # 单字符保存位置测试成功。
+        # 创建匹配模组实例
+        self.unit_match = Match.Matcher(save_path)
+        self.unit_match.match_all()
+        final_answer = self.unit_match.get_final_answer()
+        print(f"test code: final match answer is {final_answer}")
+        # 调用结束，返回关键信息
+        answer_list = list()
+        answer_list.append(self.unit_position.positionPath + self.unit_position.positionName)  # 第一个是车牌区域的缓存图片地址
+        answer_list.append(final_answer)  # 第二个是车牌识别的最终结果
+        print(answer_list)  # 打印结果进行测验
+        return answer_list  # 返回结果
 
 
 if __name__ == '__main__':
