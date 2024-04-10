@@ -111,7 +111,7 @@ class Match:
             # 数据合法
             # 接下来开始向数据库上传数据
             # 首先包装好用户信息
-            t = (None, username.get(), gender.get(), org.get(), phone.get(), email.get())  # 包装好用户信息
+            t = (username.get(), gender.get(), org.get(), phone.get(), email.get())  # 包装好用户信息
             u = make_user(t)
             interface = Interface()
             interface.insert_user(u)  # 添加用户
@@ -175,6 +175,46 @@ class Match:
         用来登记车牌信息
         :return:
         """
+
+        def if_right_info() -> bool:
+            """
+            判断输入的车牌信息是否合法
+            :return:
+            """
+            # 获取输入数据
+            pnum_info = pnum.get()
+            remark_info = text_plate_remark.get('1.0', tk.END)
+            # 去除备注信息结尾的回车
+            if remark_info[-1] == "\n":
+                remark_info = remark_info[:-1]
+            # 打印输入数据
+            print("test code >> 车牌信息合法性检测")
+            print(f"test code >> pnum:{pnum_info}; remark:{remark_info};")
+            # 合法性判断
+            # 判断空串
+            if (pnum_info == "") or (pnum_info is None) or (remark_info == "") or (remark_info is None):
+                messagebox.showwarning("不得为空", "输入信息不能为空")
+                return False
+            # 判断车牌号合法性
+            pattern = "^[A-Z0-9]{6}$"
+            if re.match(pattern, pnum_info) is None:
+                messagebox.showwarning("错误车牌号", "应输入大写字母和数字，共六位字符")
+                return False
+            messagebox.showinfo("通过", "有效性测试通过")
+            return True
+
+        def commit_info() -> None:
+            if not if_right_info():
+                # 没有通过测试
+                messagebox.showwarning("数据不合法", "数据不合法，请重新输入！")
+            # 数据合法
+            # 接下来开始向数据库上传数据
+            # 首先包装好用户信息
+            # 上传数据
+            p = Plate.Plate(pnum.get(), text_plate_remark.get('1.0', tk.END))
+            interface = Interface()
+            interface.insert_plate(p)
+
         pnum = tk.StringVar()
         remark = tk.StringVar()
 
@@ -194,16 +234,19 @@ class Match:
         label_plate_remark = ttk.Label(top_register_plate, text="备注信息：", style="plateRegisterStyle.TLabel")  # 标签组件
         label_plate_num.grid(row=1, column=0, sticky="news", padx=25, pady=10)
         label_plate_remark.grid(row=2, column=0, sticky="news", padx=25, pady=5)
-        entry_plate_num = ttk.Entry(top_register_plate)
+        entry_plate_num = ttk.Entry(top_register_plate, textvariable=pnum)
         text_plate_remark = tk.Text(top_register_plate, width=30, height=5)
+        default_text = "默认信息。"  # 为文本框添加默认内容
+        text_plate_remark.insert(tk.END, default_text)
         entry_plate_num.grid(row=1, column=1, sticky="news", padx=10, pady=10)
         text_plate_remark.grid(row=2, column=1, sticky="news", padx=10, pady=10)
 
         # 创建按钮
         btn_style = ttk.Style()
         # 注意，这里的样式是用户信息提交页面的按钮样式，直接拿过来用了。
-        btn_check = ttk.Button(top_register_plate, text="检查信息有效性", style="btnStyle.TButton")
-        btn_submit = ttk.Button(top_register_plate, text="提交信息", style="btnStyle.TButton")
+        btn_check = ttk.Button(top_register_plate, text="检查信息有效性", style="btnStyle.TButton",
+                               command=if_right_info)
+        btn_submit = ttk.Button(top_register_plate, text="提交信息", style="btnStyle.TButton", command=commit_info)
         btn_check.grid(row=3, column=1, pady=10)
         btn_submit.grid(row=4, column=1)
 
