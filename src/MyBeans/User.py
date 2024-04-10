@@ -20,6 +20,11 @@ class User:
         self.phone = phone
         self.email = email
 
+    def print_user_info(self):
+        print(
+            f"用户id:{self.uid};用户姓名:{self.uname};用户性别:{self.gender};"
+            f"所属组织:{self.org};phone:{self.phone};email:{self.email}")
+
     """ 下面是getter和setter方法 """
     """ 注意：uid不能修改 """
 

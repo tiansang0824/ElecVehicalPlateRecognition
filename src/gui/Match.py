@@ -255,6 +255,29 @@ class Match:
         搜索用户信息界面
         :return:
         """
+
+        # 创建搜索函数
+        def query_userinfo_by_uid():
+            """
+            通过uid搜索用户信息
+            :return:
+            """
+            # 首先获取用户输入
+            local_uid_data = local_uid.get()
+            # 然后判断输入是否合法
+            if int(local_uid_data) < 10000 or int(local_uid_data) > 19999:
+                messagebox.showwarning("uid不合法", "输入10000-19999的用户id进行查询")
+            # 然后搜索用户信息
+            interface = Interface()
+            u = interface.select_userinfo(local_uid_data)
+            u.print_user_info()
+            # 最后显示用户信息
+            local_username.set(u.uname)
+            local_gender.set("男" if u.gender == Gender.Gender.MALE else "女")
+            local_org.set(u.org)
+            local_phone.set(u.phone)
+            local_email.set(u.email)
+
         """ 接下来是保存信息的变量 """
         local_uid = tk.StringVar()  # 用uid搜索用户信息
         local_username = tk.StringVar()
@@ -263,11 +286,11 @@ class Match:
         local_phone = tk.StringVar()
         local_email = tk.StringVar()
         """ 测试代码:用来测试信息展示 """
-        local_username.set("username")
-        local_gender.set("female")
+        local_username.set("这里显示用户名")
+        local_gender.set("这里显示性别")
         local_org.set("所属组织")
-        local_phone.set("15703417063")
-        local_email.set("zhanghaotian0824@163.com")
+        local_phone.set("电话号码")
+        local_email.set("联系邮箱")
         """ 下面开始创建子窗口 """
         top_query_userinfo = tk.Toplevel()
         top_query_userinfo.title("用户信息搜索")
@@ -308,7 +331,7 @@ class Match:
         label_phone_data.grid(row=3, column=1, padx=5, pady=5)
         label_email_data.grid(row=4, column=1, padx=5, pady=5)
         # 创建搜索框(搜索框放在最下面)
-        label_query_info = ttk.Label(top_query_userinfo, text="输入uid", style="queryUserInfoLabel.TLabel")
+        label_query_info = ttk.Label(top_query_userinfo, text="          输入uid：", style="queryUserInfoLabel.TLabel")
         style_entry_query = ttk.Style()
         style_entry_query.configure("queryUserInfoDataEntry.TEntry")
         entry_query_userinfo = ttk.Entry(top_query_userinfo, textvariable=local_uid,
@@ -316,7 +339,7 @@ class Match:
         label_query_info.grid(row=5, column=0, padx=5)
         entry_query_userinfo.grid(row=5, column=1, padx=5)
         # 创建按钮
-        btn_query_userinfo = ttk.Button(top_query_userinfo, text="搜索", command="")  # TODO:完成搜索功能
+        btn_query_userinfo = ttk.Button(top_query_userinfo, text="搜索", command=query_userinfo_by_uid)
         btn_query_userinfo.grid(row=6, column=1, pady=(10, 0))
 
     def menu_about_product(self):

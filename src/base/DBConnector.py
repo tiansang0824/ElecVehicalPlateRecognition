@@ -81,6 +81,12 @@ class DBConnector:
         result = self._cursor.fetchall()[0]
         return make_user(result)
 
+    def select_user_by_uid(self, uid):
+        sql = f"select u.* from t_user u where uid = '{uid}'"
+        self._cursor.execute(sql)
+        result = self._cursor.fetchall()[0]
+        return make_user(result)
+
     def select_plate_by_user_phone(self, phone):
         sql = (f"select p.* "
                f"from t_user u left join t_relation r on u.uid = r.uid left join t_plate p on r.pid = p.pid "
