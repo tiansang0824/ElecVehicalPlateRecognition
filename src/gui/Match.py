@@ -5,6 +5,16 @@ from PIL import ImageTk, Image  # 用来读取图片
 import re
 from tkinter import messagebox
 from src.base.Interface import Interface
+from src.MyBeans import User, Plate, Relation, Gender
+
+
+def make_user(result: tuple) -> User:
+    g = Gender.Gender.MALE if result[2] == "M" else Gender.Gender.FEMALE
+    return User.User(result[1], g, result[3], result[4], result[5], uid=result[0])
+
+
+def make_plate(result: tuple) -> Plate:
+    return Plate.Plate(result[0], result[1], result[2])
 
 
 class Match:
@@ -66,11 +76,6 @@ class Match:
             self.root.deiconify()
 
     def menu_register_user_info(self):
-        """
-        登记用户信息
-        :return:
-        """
-
         def if_right_info():
             """ 用来测试数据是否正确 """
             pattern_username = r'^[a-zA-Z0-9]{3,16}$'  # 用户名：3-16位字符，其中每个字符都可以是大小写字母、数字。
@@ -80,10 +85,14 @@ class Match:
             # 检查用户名规范
             print(f"username:{username.get()}")
             print(f"username-result:{re.match(pattern_username, username.get())}")
+            print(f"gender:{gender.get()}")
             print(f"phone:{phone.get()}")
             print(f"email:{email.get()}")
             if re.match(pattern_username, username.get()) is None:
                 messagebox.showwarning("用户名不规范", "请输入3-16位大小写字母或者下换线的组合作为用户名")
+                return False
+            if not (gender.get() == "男" or gender == "女"):
+                messagebox.showwarning("性别输入不规范", '请输入“男”或者“女”。')
                 return False
             # 检查电话号码规范
             if re.match(pattern_phone, phone.get()) is None:
@@ -92,12 +101,21 @@ class Match:
             if re.match(pattern_email, email.get()) is None:
                 messagebox.showwarning("邮箱格式不规范", "请输入正确的邮箱地址")
                 return False
+            messagebox.showinfo("测试通过", "测试通过，数据合法")
+            return True
 
         def commit_info():
-            # 先判断数据是否正确
             if not if_right_info():
-                return
-            # TODO: 调用DAO层，操作数据库
+                # 没有通过测试
+                messagebox.showwarning("数据不合法", "数据不合法，请重新输入！")
+            # 数据合法
+            # 接下来开始向数据库上传数据
+            # 首先包装好用户信息
+            t = (None, username.get(), gender.get(), org.get(), phone.get(), email.get())  # 包装好用户信息
+            u = make_user(t)
+            interface = Interface()
+            interface.insert_user(u)  # 添加用户
+            top_register_user.destroy()
 
         """ 接下来是保存信息的变量 """
         username = tk.StringVar()
@@ -114,6 +132,7 @@ class Match:
         top_register_user.grab_set()  # 禁止回到主窗体操作
 
         """ 接下来创建信息登记表 """
+        # 创建全部标签
         info_label_style = ttk.Style()
         info_label_style.configure("userInfo.TLabel", font=("微软雅黑", 12))
         user_name_label = ttk.Label(top_register_user, text="      用户名：", style="userInfo.TLabel")
@@ -136,11 +155,11 @@ class Match:
         user_phone_entry = ttk.Entry(top_register_user, textvariable=phone, style="userInfoEntry.TEntry")
         user_email_entry = ttk.Entry(top_register_user, textvariable=email, style="userInfoEntry.TEntry")
         # 全部grid
-        user_name_entry.grid(row=0, column=1, padx=(5, 10), pady=(20, 5))
-        user_gender_entry.grid(row=1, column=1, padx=(5, 10), pady=5)
-        user_org_entry.grid(row=2, column=1, padx=(5, 10), pady=5)
-        user_phone_entry.grid(row=3, column=1, padx=(5, 10), pady=5)
-        user_email_entry.grid(row=4, column=1, padx=(5, 10), pady=5)
+        user_name_entry.grid(row=0, column=1, padx=(5, 5), pady=(20, 5))
+        user_gender_entry.grid(row=1, column=1, padx=(5, 5), pady=5)
+        user_org_entry.grid(row=2, column=1, padx=(5, 5), pady=5)
+        user_phone_entry.grid(row=3, column=1, padx=(5, 5), pady=5)
+        user_email_entry.grid(row=4, column=1, padx=(5, 5), pady=5)
         # 创建测试和提交按钮
         btn_style = ttk.Style()
         btn_style.configure("userRegisterBtn.TButton", font=("微软雅黑", 10), width=10, height=2)

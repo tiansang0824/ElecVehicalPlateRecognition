@@ -58,6 +58,9 @@ class Interface:
         print(select_result)
         return select_result
 
+    def insert_user(self, user_info: User):
+        self.unit_dbcon.add_user(user_info)
+
     def insert_insert_plate(self, plate_num: str, remark: str) -> None:
         """
         添加新的车牌信息
