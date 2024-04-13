@@ -74,6 +74,15 @@ class Interface:
         p = Plate.Plate(plate_num, remark)
         self.unit_dbcon.add_plate(p)
 
+    def insert_relation(self, uid, pid):
+        """
+        添加关系信息函数
+        :param uid:
+        :param pid:
+        :return:
+        """
+        self.unit_dbcon.add_relation(uid, pid)
+
     def select_userinfo(self, uid: str) -> User:
         return self.unit_dbcon.select_user_by_uid(uid)
 

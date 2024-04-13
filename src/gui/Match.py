@@ -442,6 +442,72 @@ class Match:
         entry_query_by_pnum.grid(row=2, column=1, padx=5, pady=5)
         btn_query_by_pnum.grid(row=3, column=1, padx=5, pady=5)
 
+    def menu_add_relation(self):
+        """
+        用于添加新关系的功能按键
+        在添加关系的模型中
+        :return:
+        """
+        def check_legal() -> bool:
+            """
+            判断数据是否合法
+            :return:
+            """
+            # 判断uid
+            if int(local_uid.get()) < 10000 or int(local_uid.get()) > 19999:
+                messagebox.showwarning("非法数据","uid数据不合法，请重新输入。")
+                return False
+            if int(local_pid.get()) < 20000 or int(local_pid.get()) > 29999:
+                messagebox.showwarning("非法数据","pid数据不合法，请重新输入。")
+                return False
+            messagebox.showinfo("合法数据","数据合法，检查通过")
+            return True
+
+        def commit_info():
+            """
+            提交信息按钮功能
+            :return:
+            """
+            # 先检查一次数据是否合法
+            if not check_legal():
+                return  # 数据非法，不作为
+            # 数据合法，提交信息
+            interface = Interface()
+            interface.insert_relation(local_uid.get(), local_pid.get())
+
+        # 创建本地变量
+        local_uid = tk.StringVar()
+        local_pid = tk.StringVar()
+        # 创建子窗口
+        top_add_bind = tk.Toplevel()
+        top_add_bind.title("添加绑定关系")
+        top_add_bind.geometry("400x300+100+100")
+        top_add_bind.resizable(False, False)
+        top_add_bind.transient(self.root)
+        top_add_bind.grab_set()  # 禁止回到主窗体操作
+        # 创建标签组件
+        style_label_mark = ttk.Style()
+        style_label_mark.configure("styleLabelMark.TLabel", font=("微软雅黑", 13))
+        label_mark_uid = ttk.Label(top_add_bind, text="用户ID：", style="styleLabelMark.TLabel")
+        label_mark_pid = ttk.Label(top_add_bind, text="车牌ID：", style="styleLabelMark.TLabel")
+        label_mark_uid.grid(row=1, column=1, padx=(50, 5), pady=(20, 5))
+        label_mark_pid.grid(row=2, column=1, padx=(50, 5), pady=5)
+        # 创建输入组件
+        style_entry = ttk.Style()
+        style_entry.configure("styleEntry.TEntry", font=("微软雅黑", 13))
+        entry_uid = ttk.Entry(top_add_bind, textvariable=local_uid, style="styleEntry.TEntry")
+        entry_pid = ttk.Entry(top_add_bind, textvariable=local_pid, style="styleEntry.TEntry")
+        entry_uid.grid(row=1, column=2, padx=10, pady=(20, 5))
+        entry_pid.grid(row=2, column=2, padx=10, pady=(5, 5))
+        # 创建信息检查按钮
+        style_btn = ttk.Style()
+        style_btn.configure("styleBtn.TButton", font=("微软雅黑", 13), width=20)
+        btn_check = ttk.Button(top_add_bind, text="检查信息", command=check_legal)
+        btn_check.grid(row=3, column=2, padx=20, pady=10)
+        # 创建登记按钮
+        btn_commit = ttk.Button(top_add_bind, text="登记信息", command=commit_info)
+        btn_commit.grid(row=4, column=2)
+
     def create_menubar(self):
         """ 创建顶部菜单栏的函数
         """
@@ -477,11 +543,11 @@ class Match:
         register_menu.add_command(label="删除车牌信息")
         register_menu.add_command(label="删除人车关系")
         """
-        """ 创建“绑定”菜单 
+        """ 创建“绑定”菜单 """
         register_menu = tk.Menu(total_menubar, tearoff=0)
         total_menubar.add_cascade(label="绑定", menu=register_menu)
-        register_menu.add_command(label="绑定人车关系")
-        """
+        register_menu.add_command(label="绑定人车关系", command=self.menu_add_relation)
+        register_menu.add_command(label="快速添加")
         """ 创建“绑定”菜单 """
         register_menu = tk.Menu(total_menubar, tearoff=0)
         total_menubar.add_command(label="关于(产品)", command=self.menu_about_product)
