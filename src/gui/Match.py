@@ -448,6 +448,7 @@ class Match:
         在添加关系的模型中
         :return:
         """
+
         def check_legal() -> bool:
             """
             判断数据是否合法
@@ -455,12 +456,12 @@ class Match:
             """
             # 判断uid
             if int(local_uid.get()) < 10000 or int(local_uid.get()) > 19999:
-                messagebox.showwarning("非法数据","uid数据不合法，请重新输入。")
+                messagebox.showwarning("非法数据", "uid数据不合法，请重新输入。")
                 return False
             if int(local_pid.get()) < 20000 or int(local_pid.get()) > 29999:
-                messagebox.showwarning("非法数据","pid数据不合法，请重新输入。")
+                messagebox.showwarning("非法数据", "pid数据不合法，请重新输入。")
                 return False
-            messagebox.showinfo("合法数据","数据合法，检查通过")
+            messagebox.showinfo("合法数据", "数据合法，检查通过")
             return True
 
         def commit_info():
@@ -508,6 +509,83 @@ class Match:
         btn_commit = ttk.Button(top_add_bind, text="登记信息", command=commit_info)
         btn_commit.grid(row=4, column=2)
 
+    def menu_quick_add_relation(self):
+        """
+        快速添加新关系（包括添加用户、添加车牌、添加关系）
+        :return:
+        """
+        # 创建本地变量
+        local_uid = tk.StringVar()
+        local_uname = tk.StringVar()
+        local_gender = tk.StringVar()
+        local_org = tk.StringVar()
+        local_phone = tk.StringVar()
+        local_email = tk.StringVar()
+
+        local_pid = tk.StringVar()
+        local_remark = tk.StringVar()
+
+        local_r_remark = tk.StringVar()  # 这个是绑定关系的备注
+
+        # 创建子窗口
+        top_quick_add = tk.Toplevel()
+        top_quick_add.title("快速绑定")
+        top_quick_add.geometry("500x300+100+100")
+        top_quick_add.resizable(False, False)
+        top_quick_add.transient(self.root)
+        top_quick_add.grab_set()  # 禁止回到主窗体操作
+
+        # 用户信息部分
+        # 创建说明性标签
+        style_label_mark = ttk.Style()
+        style_label_mark.configure("styleLabelMark.TLabel", font=("微软雅黑", 13))
+        label_mark_uname = ttk.Label(top_quick_add, text="用户姓名：", style="styleLabelMark.TLabel")
+        label_mark_gender = ttk.Label(top_quick_add, text="用户性别：", style="styleLabelMark.TLabel")
+        label_mark_org = ttk.Label(top_quick_add, text="所属组织：", style="styleLabelMark.TLabel")
+        label_mark_phone = ttk.Label(top_quick_add, text="联系电话：", style="styleLabelMark.TLabel")
+        label_mark_email = ttk.Label(top_quick_add, text="联系邮箱：", style="styleLabelMark.TLabel")
+        # 标签布局
+        label_mark_uname.grid(row=0, column=0, padx=(20, 5), pady=(30, 5))
+        label_mark_gender.grid(row=1, column=0, padx=(20, 5), pady=5)
+        label_mark_org.grid(row=2, column=0, padx=(20, 5), pady=5)
+        label_mark_phone.grid(row=3, column=0, padx=(20, 5), pady=5)
+        label_mark_email.grid(row=4, column=0, padx=(20, 5), pady=5)
+        # 创建entry组件
+        entry_uname = ttk.Entry(top_quick_add)
+        entry_gender = ttk.Entry(top_quick_add)
+        entry_org = ttk.Entry(top_quick_add)
+        entry_phone = ttk.Entry(top_quick_add)
+        entry_email = ttk.Entry(top_quick_add)
+        # 输入框布局
+        entry_uname.grid(row=0, column=1, padx=5, pady=(32, 5))
+        entry_gender.grid(row=1, column=1, padx=5, pady=5)
+        entry_org.grid(row=2, column=1, padx=5, pady=5)
+        entry_phone.grid(row=3, column=1, padx=5, pady=5)
+        entry_email.grid(row=4, column=1, padx=5, pady=5)
+        # 车牌信息部分
+        label_mark_pnum = ttk.Label(top_quick_add, text="车牌号码：", style="styleLabelMark.TLabel")
+        label_mark_remark = ttk.Label(top_quick_add, text="车牌备注:", style="styleLabelMark.TLabel")
+        entry_pnum = ttk.Entry(top_quick_add)
+        text_mark_remark = tk.Text(top_quick_add, width=24, height=4)
+        text_mark_remark.insert("end", "在此输入车牌信息备注")
+        # 车牌信息部分组件布局
+        label_mark_pnum.grid(row=0, column=2, padx=(20, 5), pady=(30, 5), sticky="w")
+        entry_pnum.grid(row=1, column=2, padx=(20, 5), pady=5, sticky="w")
+        label_mark_remark.grid(row=2, column=2, padx=(20, 5), pady=5, sticky="w")
+        text_mark_remark.grid(row=3, column=2, rowspan=2, padx=(20, 5), pady=10, sticky="w")
+
+        # 创建信息组备注信息
+        label_mark_uni_remark = ttk.Label(top_quick_add, text="关系备注：", style="styleLabelMark.TLabel")
+        text_uni_remark = tk.Text(top_quick_add, width=20, height=3)
+        label_mark_uni_remark.grid(row=5, column=0, padx=(20, 5), pady=(20,5))
+        text_uni_remark.grid(row=5, column=1, padx=5, pady=10, sticky="nw")
+
+        # 创建功能性按钮组件
+        btn_check = ttk.Button(top_quick_add, text="检查信息")
+        btn_commit = ttk.Button(top_quick_add, text="提交信息")
+        btn_check.grid(row=5, column=2, sticky="w", padx=(20, 3))
+        btn_commit.grid(row=5, column=2, sticky="e", padx=(5, 0))
+
     def create_menubar(self):
         """ 创建顶部菜单栏的函数
         """
@@ -547,7 +625,7 @@ class Match:
         register_menu = tk.Menu(total_menubar, tearoff=0)
         total_menubar.add_cascade(label="绑定", menu=register_menu)
         register_menu.add_command(label="绑定人车关系", command=self.menu_add_relation)
-        register_menu.add_command(label="快速添加")
+        register_menu.add_command(label="快速添加", command=self.menu_quick_add_relation)
         """ 创建“绑定”菜单 """
         register_menu = tk.Menu(total_menubar, tearoff=0)
         total_menubar.add_command(label="关于(产品)", command=self.menu_about_product)
