@@ -77,6 +77,9 @@ class Interface:
     def select_userinfo(self, uid: str) -> User:
         return self.unit_dbcon.select_user_by_uid(uid)
 
+    def select_plate_info(self, pid: str) -> Plate:
+        return self.unit_dbcon.select_plate_by_pid(pid)
+
     def interface_identify(self, file_path: str):
         """
         该函数用于调用完整的图像识别模块，实现一键识别图片内容。

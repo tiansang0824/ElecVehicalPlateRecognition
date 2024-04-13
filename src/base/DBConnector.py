@@ -96,6 +96,14 @@ class DBConnector:
         # print(f'result: {result}')
         return make_plate(result)
 
+    def select_plate_by_pid(self, pid: str):
+        """通过pid搜索车牌信息"""
+        sql = f"select p.* from t_plate p where p.pid = {pid}"
+        self._cursor.execute(sql)
+        result = self._cursor.fetchall()[0]
+        # print(f"test code >> 车牌搜索结果为：{result[0]},{result[1]},{result[2]}")
+        return Plate(pid=result[0], pnum=result[1], remark=result[2])
+
     def add_user(self, user_info: User):
         g = "M" if user_info.gender == Gender.MALE else "F"
         sql = (f"insert into t_user(uname, gender, org, phone, email) "
@@ -201,9 +209,10 @@ if __name__ == '__main__':
         password="root",
         database="db_pr"
     )
+    """
     u = con.select_user_by_phone("18686007731")
     print(f'通过电话号查找车主信息：{u.uname, u.gender, u.org, u.phone, u.email}', end='\n\n')
-    u = con.select_user_by_pnum('123abc')
+    # u = con.select_user_by_pnum('123abc')
     print(f'通过车牌号查找车主信息：{u.uname, u.gender, u.org, u.phone, u.email}', end='\n\n')
     p = con.select_plate_by_user_phone('15703417063')
     print(f'通过电话号查找车牌信息：{p.pnum, p.remark}')
@@ -225,3 +234,7 @@ if __name__ == '__main__':
     con.update_relation_info(r)
     # 搜索管理员用户
     print(f"管理员搜索结果为：{con.select_admin_exist('admin', 'root')}")
+    """
+    # 测试通过pid搜索车牌信息
+    ret = con.select_plate_by_pid("20001")
+    print(f"test code >> 通过pid搜索车牌信息：{ret}")

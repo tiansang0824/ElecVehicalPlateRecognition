@@ -377,7 +377,36 @@ class Match:
         检索车牌信息
         :return:
         """
+
+        def select_plate():
+            """
+            搜索车牌信息的函数
+            :return:
+            """
+            pid = local_pid.get()  # 获取要搜索的车牌信息
+            print(f"test code >> 要搜索的车牌ID是：{pid}")
+            # 合法性检查
+            if pid == "" or pid is None:
+                messagebox.showwarning("不得为空", "输入车牌号码ID不能为空")
+                return None
+            if int(pid) < 20000 or int(pid) > 29999:
+                messagebox.showwarning("非法数据", "非法数据，请输入正确范围内的车牌号码id")
+                return None
+            # 通过合法性检查
+            # 接下来连接数据库搜索数据
+            interface = Interface()
+            p = interface.select_plate_info(pid)  # 搜索pid
+            # 然后显示数据
+            local_pnum.set(p.pnum)
+            local_remark.set(p.remark)
+            # 设置text文本框内容
+            text_show_remark.config(state=tk.NORMAL)  # 先设置为可修改状态
+            text_show_remark.delete("1.0", tk.END)  # 删除原先内容
+            text_show_remark.insert(tk.END, local_remark.get())  # 插入新内容
+            text_show_remark.config(state=tk.DISABLED)  # 改回禁用状态
+
         # 创建本地变量
+        local_pid = tk.StringVar()
         local_pnum = tk.StringVar()
         local_remark = tk.StringVar()
         # 创建子窗口
@@ -400,15 +429,15 @@ class Match:
         style_show_plate.configure("queryPlateShowLabelStyle.TLabel", font=("微软雅黑", 13),
                                    background="white", relief="groove", borderwidth=1, width=20)
         label_show_plate = ttk.Label(top_query_plate, textvariable=local_pnum, style="queryPlateShowLabelStyle.TLabel")
-        text_show_remark = tk.Text(top_query_plate, height=5, width=28)
+        text_show_remark = tk.Text(top_query_plate, height=5, width=28, state="disabled")
         label_show_plate.grid(row=0, column=1, padx=5, pady=(20, 5))
         text_show_remark.grid(row=1, column=1, padx=5, pady=5)
         # 创建搜索按钮
         style_query_label = ttk.Style()
         style_query_label.configure("styleQueryByPnum.TLabel", font=("微软雅黑", 13))
-        label_query_by_pnum = ttk.Label(top_query_plate, text="            输入号码:",style="styleQueryByPnum.TLabel")
-        entry_query_by_pnum = ttk.Entry(top_query_plate, textvariable=local_pnum, width=20)
-        btn_query_by_pnum = ttk.Button(top_query_plate, text="搜索", command="")
+        label_query_by_pnum = ttk.Label(top_query_plate, text="            输入ID:", style="styleQueryByPnum.TLabel")
+        entry_query_by_pnum = ttk.Entry(top_query_plate, textvariable=local_pid, width=20)
+        btn_query_by_pnum = ttk.Button(top_query_plate, text="搜索", command=select_plate)
         label_query_by_pnum.grid(row=2, column=0, padx=5, pady=5)
         entry_query_by_pnum.grid(row=2, column=1, padx=5, pady=5)
         btn_query_by_pnum.grid(row=3, column=1, padx=5, pady=5)
