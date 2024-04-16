@@ -514,6 +514,36 @@ class Match:
         快速添加新关系（包括添加用户、添加车牌、添加关系）
         :return:
         """
+
+        def quick_add():
+            """
+            快速添加功能
+            :return:
+            """
+            print(f"test code >> 开始执行快速添加功能")
+            # 第一步：创建用户实例
+            # 先准备数据
+            # 改好性别
+            real_gender: Gender.Gender
+            if local_gender.get() == "男":
+                real_gender = Gender.Gender.MALE
+            else:
+                real_gender = Gender.Gender.FEMALE
+            # 包装用户实例
+            u = User.User(local_uname.get(), real_gender, local_org.get(), local_phone.get(), local_email.get())
+            # 第二步：创建车牌实例
+            local_remark.set(text_mark_remark.get("1.0", tk.END))
+            p = Plate.Plate(local_pnum.get(), local_remark.get())
+            # 第三步：创建统一接口实例，执行快速添加功能
+            interface = Interface()
+            ret_info = interface.quick_add_relation(u, p)
+            # 返回执行结果
+            print(f"test code >> 快速添加功能添加结果为：{ret_info}")
+            # 提示信息
+            messagebox.showinfo("处理结果",
+                                f"被添加的用户uid为：{ret_info[0]}\n被添加的车牌pid为：{ret_info[1]}"
+                                f"\n被添加的关系rid 为：{ret_info[2]}\n请务必保存好您的信息！")
+
         # 创建本地变量
         local_uid = tk.StringVar()
         local_uname = tk.StringVar()
@@ -523,6 +553,7 @@ class Match:
         local_email = tk.StringVar()
 
         local_pid = tk.StringVar()
+        local_pnum = tk.StringVar()
         local_remark = tk.StringVar()
 
         local_r_remark = tk.StringVar()  # 这个是绑定关系的备注
@@ -551,11 +582,11 @@ class Match:
         label_mark_phone.grid(row=3, column=0, padx=(20, 5), pady=5)
         label_mark_email.grid(row=4, column=0, padx=(20, 5), pady=5)
         # 创建entry组件
-        entry_uname = ttk.Entry(top_quick_add)
-        entry_gender = ttk.Entry(top_quick_add)
-        entry_org = ttk.Entry(top_quick_add)
-        entry_phone = ttk.Entry(top_quick_add)
-        entry_email = ttk.Entry(top_quick_add)
+        entry_uname = ttk.Entry(top_quick_add, textvariable=local_uname)
+        entry_gender = ttk.Entry(top_quick_add, textvariable=local_gender)
+        entry_org = ttk.Entry(top_quick_add, textvariable=local_org)
+        entry_phone = ttk.Entry(top_quick_add, textvariable=local_phone)
+        entry_email = ttk.Entry(top_quick_add, textvariable=local_email)
         # 输入框布局
         entry_uname.grid(row=0, column=1, padx=5, pady=(32, 5))
         entry_gender.grid(row=1, column=1, padx=5, pady=5)
@@ -565,7 +596,7 @@ class Match:
         # 车牌信息部分
         label_mark_pnum = ttk.Label(top_quick_add, text="车牌号码：", style="styleLabelMark.TLabel")
         label_mark_remark = ttk.Label(top_quick_add, text="车牌备注:", style="styleLabelMark.TLabel")
-        entry_pnum = ttk.Entry(top_quick_add)
+        entry_pnum = ttk.Entry(top_quick_add, textvariable=local_pnum)
         text_mark_remark = tk.Text(top_quick_add, width=24, height=4)
         text_mark_remark.insert("end", "在此输入车牌信息备注")
         # 车牌信息部分组件布局
@@ -577,12 +608,12 @@ class Match:
         # 创建信息组备注信息
         label_mark_uni_remark = ttk.Label(top_quick_add, text="关系备注：", style="styleLabelMark.TLabel")
         text_uni_remark = tk.Text(top_quick_add, width=20, height=3)
-        label_mark_uni_remark.grid(row=5, column=0, padx=(20, 5), pady=(20,5))
+        label_mark_uni_remark.grid(row=5, column=0, padx=(20, 5), pady=(20, 5))
         text_uni_remark.grid(row=5, column=1, padx=5, pady=10, sticky="nw")
 
         # 创建功能性按钮组件
         btn_check = ttk.Button(top_quick_add, text="检查信息")
-        btn_commit = ttk.Button(top_quick_add, text="提交信息")
+        btn_commit = ttk.Button(top_quick_add, text="提交信息", command=quick_add)
         btn_check.grid(row=5, column=2, sticky="w", padx=(20, 3))
         btn_commit.grid(row=5, column=2, sticky="e", padx=(5, 0))
 

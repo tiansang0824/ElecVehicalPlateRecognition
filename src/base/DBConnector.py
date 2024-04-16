@@ -104,20 +104,74 @@ class DBConnector:
         # print(f"test code >> 车牌搜索结果为：{result[0]},{result[1]},{result[2]}")
         return Plate(pid=result[0], pnum=result[1], remark=result[2])
 
-    def add_user(self, user_info: User):
+    def check_user_exists(self, user: User):
+        """
+        通过用户的所有非主属性组合，判断用户是否存在
+        :param user:
+        :return:
+        """
+        uname = user.uname
+        gender = "F" if user.gender == Gender.FEMALE else "M"
+        phone = user.phone
+        email = user.email
+        sql = (f"select u.* from t_user u where u.uname='{uname}' and u.gender='{gender}' "
+               f"and u.phone='{phone}' and u.email='{email}';")  # 写好sql
+        self._cursor.execute(sql)
+        result = self._cursor.fetchall()
+        if len(result) == 0:
+            # 说明没有查到东西，目标用户不存在
+            return False
+        else:
+            # 查到了内容，目标用户存在
+            return True
+
+    def check_plate_exists(self, plate: Plate):
+        pnum = plate.pnum
+        sql = f"select p.* from t_plate p where p.pnum = '{pnum}'"
+        self._cursor.execute(sql)
+        result = self._cursor.fetchall()
+        if len(result) == 0:
+            # 说明没有查到东西，目标车牌不存在
+            return False
+        else:
+            # 查到了内容，目标车牌存在
+            return True
+
+    def add_user(self, user_info: User) -> int:
+        """
+        添加用户信息，返回新用户uid
+        :param user_info:
+        :return:
+        """
         g = "M" if user_info.gender == Gender.MALE else "F"
         sql = (f"insert into t_user(uname, gender, org, phone, email) "
                f"values('{user_info.uname}', '{g}', '{user_info.org}', '{user_info.phone}', '{user_info.email}')")
         # print(sql)
         self._cursor.execute(sql)
-        self._conn.commit()
+        self._conn.commit()  # 提交修改
+        # select操作与事务无关，故提前提交事务
+        # 接下来找到新用户的uid，将其返回给调用者
+        sql_select = (f"select u.uid from t_user u "
+                      f"where uname = '{user_info.uname}' and gender= '{g}' and org = '{user_info.org}'"
+                      f"and phone = '{user_info.phone}' and email = '{user_info.email}'")
+        self._cursor.execute(sql_select)
+        result = self._cursor.fetchall()[0][0]
+        print(f"test code >> DBConntor添加用户函数返回的用户uid搜索结果：{result}")
         print('用户信息添加完毕')
+        return result
 
     def add_plate(self, plate_info: Plate):
         sql = f"insert into t_plate(pnum, remark) values('{plate_info.pnum}', '{plate_info.remark}')"
         self._cursor.execute(sql)
         self._conn.commit()
+        # 接下来搜索一次车牌信息
+        sql_select = (f"select p.pid from t_plate p "
+                      f"where p.pnum = '{plate_info.pnum}' and p.remark = '{plate_info.remark}';")
+        self._cursor.execute(sql_select)
+        result = self._cursor.fetchall()[0][0]
+        print(f"test code >> 搜索车牌pid结果：{result}")
         print('车牌信息添加完毕')
+        return result
 
     def add_relation(self, uid: int, pid: int):
         """
@@ -131,7 +185,11 @@ class DBConnector:
         sql = f"insert into t_relation(uid, pid) values ({uid}, {pid});"
         self._cursor.execute(sql)
         self._conn.commit()
+        sql_select = f"select r.rid from t_relation r where r.uid = {uid} and r.pid = {pid};"
+        self._cursor.execute(sql_select)
+        result = self._cursor.fetchall()[0][0]
         print('人车信息添加完毕')
+        return result
 
     def del_user_by_id(self, uid: int):
         """
@@ -234,7 +292,25 @@ if __name__ == '__main__':
     con.update_relation_info(r)
     # 搜索管理员用户
     print(f"管理员搜索结果为：{con.select_admin_exist('admin', 'root')}")
-    """
     # 测试通过pid搜索车牌信息
     ret = con.select_plate_by_pid("20001")
     print(f"test code >> 通过pid搜索车牌信息：{ret}")
+    """
+    # 测试检查用户和车牌是否存在的函数是否可用
+    # 首先创建用户
+    u = User("田桑", Gender.FEMALE, "用户信息演示", "15703417063", "tiansang@163.com")
+    # 检查用户是否存在
+    print(f'存在性：{con.check_user_exists(u)}')
+    # 创建车牌信息
+    p = Plate("M28199", "备注信息，车牌默认六位字符")
+    print(f'车牌信息存在性：{con.check_plate_exists(p)}')
+    # 测试添加函数是否返回id
+    u = User("tiantiantiantian", Gender.FEMALE, "wok", "15703417066", "tiansang111@163.com")
+    print(f"{con.add_user(u)}")
+    # 创建车牌信息
+    p = Plate("XYZ123", "测试信息")
+    print(f"添加车牌返回值：{con.add_plate(p)}")
+    # 测试添加关系的函数是否返回rid
+    print(f"测试添加关系函数的返回值：{con.add_relation(10030, 20010)}")
+    print(f"测试添加关系函数的返回值：{con.add_relation(10021, 20009)}")
+

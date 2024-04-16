@@ -89,6 +89,35 @@ class Interface:
     def select_plate_info(self, pid: str) -> Plate:
         return self.unit_dbcon.select_plate_by_pid(pid)
 
+    def quick_add_relation(self, user_info: User, plate_info: Plate) -> tuple:
+        """
+        该函数用于快速添加用户信息、车牌信息，以及人车关系（用户信息、车牌信息和人车关系都是新添加的）
+        :return:
+            0: 添加成功
+            1: 用户已存在
+            2: 车牌已存在
+        """
+        # 测试代码：
+        print("test code >> 开始执行函数：Interface.quick_add_relation")
+        # 提前判断被添加的用户是否存在
+        user_exists = self.unit_dbcon.check_user_exists(user_info)
+        if user_exists:  # 用户存在
+            return 1
+        # 然后判断被添加的车牌信息是否存在
+        plate_exists = self.unit_dbcon.check_plate_exists(plate_info)
+        if plate_exists:  # 车牌信息存在
+            return 2
+        # 用户、车牌信息之前都不存在，那么显然人车关系也不存在
+        # 这种情况下就可以正常添加人车关系信息
+        # 添加用户信息
+        uid = self.unit_dbcon.add_user(user_info)
+        # 添加车牌信息
+        pid = self.unit_dbcon.add_plate(plate_info)
+        # 添加人车关系
+        rid = self.unit_dbcon.add_relation(uid, pid)
+        # 返回uid、pid、rid
+        return (uid, pid, rid)
+
     def interface_identify(self, file_path: str):
         """
         该函数用于调用完整的图像识别模块，实现一键识别图片内容。
