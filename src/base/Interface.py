@@ -137,7 +137,7 @@ class Interface:
         # 找到车牌位置
         img = self.unit_position.get_profile()
         # 输出处理过程
-        self.unit_position.get_details()
+        self.unit_position.get_details()  # 过程测试代码
         # 展示图片
         cv2.imshow("plate area after process 1", img)
         cv2.waitKey()  # 避免cv展示图片闪退
@@ -148,8 +148,8 @@ class Interface:
         # 新图片重新获取车牌区域
         img = self.unit_position.get_profile()
         # 输出处理过程
-        self.unit_position.get_details()
-        # 展示图片
+        self.unit_position.get_details()  # 过程测试代码
+        # 展示图片  # 过程测试代码
         cv2.imshow("plate area after process 2", img)
         cv2.waitKey()
         cv2.destroyAllWindows()

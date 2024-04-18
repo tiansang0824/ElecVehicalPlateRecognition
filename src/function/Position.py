@@ -135,7 +135,7 @@ class MyPosition:
         # 复制原图,避免损坏原图; 将 box 的信息包装到列表中; -1表示绘制所有轮廓; 设定轮廓颜色; 设定轮廓粗细
         final_img = cv2.drawContours(self.img.copy(), [box], -1, (0, 0, 255), 3)
         # cv2 展示图片
-        cv2.imshow('final img with max contour drawn on', final_img)
+        cv2.imshow('final img with max contour drawn on', final_img)  # 过程测试代码
         # 获取box的四个顶点坐标
         up = max(min(box[i][1] for i in range(4)), 0)
         down = min(max(box[i][1] for i in range(4)), self.len_x)
@@ -248,7 +248,7 @@ if __name__ == '__main__':
     plt.rcParams['font.family'] = ['Simsun']
     # 创建实例,并且传入图片位置
     # pos是创建出来的实例
-    pos = MyPosition('../images/test01.jpg')
+    pos = MyPosition('../images/img02.jpg')
     # 去噪处理
     pos.remove_noise(pos.img)
     # 找到车牌位置
