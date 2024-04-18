@@ -227,28 +227,15 @@ if __name__ == '__main__':
     下面是一个调用demo,用作测试
     
     测试数据记录：
-    - test7: 汉字会被裁剪掉；
-    - test8: 汉字上面的小边会被模糊一点，但是数字字母不影响
-    - test9(1).png: 可以识别到数字字母 
-    - test9: 只能清晰识别数字字母
-    - test10: 完美找到车牌位置，但是上边似乎不方便字符分割
-    - test11: 情况类似test10
-    - test11_2: 和test11是同一个车牌，换了一个角度，上边的字母略微被裁掉一点
-    - test12: 比较完美
-    - test13: 比较完美
-    - test14: 比较完美，但是略逊一筹
-    - test15: 略微完美
-    - test16: 略微完美
-    - test17: 略微完美
-    
-    可实际实用的图片（可完美实现车牌识别图片）：
-    - test12-1 
-    - 
+    - img05：汉字区域无法定位到，暂时抛弃
+    - img07：汉字区域无法定位到，暂时抛弃
+    - img08：汉字区域无法定位到，暂时抛弃
+    - img09：汉字区域无法定位到，暂时抛弃
     """
     plt.rcParams['font.family'] = ['Simsun']
     # 创建实例,并且传入图片位置
     # pos是创建出来的实例
-    pos = MyPosition('../images/img02.jpg')
+    pos = MyPosition('../images/img23.jpg')
     # 去噪处理
     pos.remove_noise(pos.img)
     # 找到车牌位置
