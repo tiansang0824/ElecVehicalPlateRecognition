@@ -227,15 +227,26 @@ if __name__ == '__main__':
     下面是一个调用demo,用作测试
     
     测试数据记录：
-    - img05：汉字区域无法定位到，暂时抛弃
-    - img07：汉字区域无法定位到，暂时抛弃
-    - img08：汉字区域无法定位到，暂时抛弃
-    - img09：汉字区域无法定位到，暂时抛弃
+    - test01可用
+    - img23可用
+    - img05可用
+    - img07可用
+    - img08可用
+    - img10可用
+    - img12可用
+    - img13 ok
+    - img14 ok f83956
+    - img16 ok 292256
+    - img17 ok 292256
+    - img19 ok L58720
+    - img20 err
+    - img22 err
+    - img23 ok L51802
     """
     plt.rcParams['font.family'] = ['Simsun']
     # 创建实例,并且传入图片位置
     # pos是创建出来的实例
-    pos = MyPosition('../images/img23.jpg')
+    pos = MyPosition('../images/test01.jpg')
     # 去噪处理
     pos.remove_noise(pos.img)
     # 找到车牌位置
