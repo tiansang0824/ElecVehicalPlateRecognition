@@ -765,7 +765,9 @@ class Match:
             remark_text = text_remark_data.get("1.0", tk.END)
             print(f"test-code >> 车牌备注信息是：{remark_text}")
             interface = Interface()
-            interface.insert_insert_plate(self.var_plate_number.get(), remark_text)
+            ret_pid = interface.insert_insert_plate(self.var_plate_number.get(), remark_text)
+            if ret_pid is not None:
+                messagebox.showinfo("车牌信息添加完成", f"车牌ID为{ret_pid}，请牢记。")
 
         # 创建子窗口
         top_register_plate = tk.Toplevel()
