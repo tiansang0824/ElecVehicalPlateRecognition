@@ -59,7 +59,8 @@ class Interface:
         return select_result
 
     def insert_user(self, user_info: User):
-        self.unit_dbcon.add_user(user_info)
+        ret_uid = self.unit_dbcon.add_user(user_info)
+        return ret_uid
 
     def insert_plate(self, plate_info: Plate):
         self.unit_dbcon.add_plate(plate_info)

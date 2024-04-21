@@ -111,10 +111,13 @@ class Match:
             # 数据合法
             # 接下来开始向数据库上传数据
             # 首先包装好用户信息
-            t = (username.get(), gender.get(), org.get(), phone.get(), email.get())  # 包装好用户信息
+            t = (None, username.get(), gender.get(), org.get(), phone.get(), email.get())  # 包装好用户信息
             u = make_user(t)
             interface = Interface()
-            interface.insert_user(u)  # 添加用户
+            ret_uid = interface.insert_user(u)  # 添加用户
+            print(f"test code >> GUI菜单功能添加用户返回uid：{ret_uid}")
+            if ret_uid is not None:
+                messagebox.showinfo("添加成功", f"新用户ID为{ret_uid}，请牢记。")
             top_register_user.destroy()
 
         """ 接下来是保存信息的变量 """
