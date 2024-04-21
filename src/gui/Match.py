@@ -216,7 +216,11 @@ class Match:
             # 上传数据
             p = Plate.Plate(pnum.get(), text_plate_remark.get('1.0', tk.END))
             interface = Interface()
-            interface.insert_plate(p)
+            ret_pid = interface.insert_plate(p)
+            print(f"test code >> 添加车牌的返回结果ID为：{ret_pid}")
+            if ret_pid is not None:
+                messagebox.showinfo("车牌信息添加完成", f"车牌ID为{ret_pid}，请牢记。")
+            top_register_plate.destroy()
 
         pnum = tk.StringVar()
         remark = tk.StringVar()

@@ -63,9 +63,10 @@ class Interface:
         return ret_uid
 
     def insert_plate(self, plate_info: Plate):
-        self.unit_dbcon.add_plate(plate_info)
+        ret_pid = self.unit_dbcon.add_plate(plate_info)
+        return ret_pid
 
-    def insert_insert_plate(self, plate_num: str, remark: str) -> None:
+    def insert_insert_plate(self, plate_num: str, remark: str):
         """
         添加新的车牌信息
         :param plate_num:
@@ -73,7 +74,8 @@ class Interface:
         :return:
         """
         p = Plate.Plate(plate_num, remark)
-        self.unit_dbcon.add_plate(p)
+        ret_pid = self.unit_dbcon.add_plate(p)
+        return ret_pid
 
     def insert_relation(self, uid, pid):
         """
