@@ -78,7 +78,7 @@ class Match:
     def menu_register_user_info(self):
         def if_right_info():
             """ 用来测试数据是否正确 """
-            pattern_username = r'^[a-zA-Z0-9]{3,16}$'  # 用户名：3-16位字符，其中每个字符都可以是大小写字母、数字。
+            pattern_username = r'^[\u4e00-\u9fa5]{3,4}$'  # 用户名：3-4个汉字字符
             pattern_phone = r'1\d{10}'  # 电话号：以数字“1”开头，后面紧跟着10个数字的字符串。
             pattern_email = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'  # 邮箱地址
             # 利用正则表达式检测数据内容
@@ -89,9 +89,9 @@ class Match:
             print(f"phone:{phone.get()}")
             print(f"email:{email.get()}")
             if re.match(pattern_username, username.get()) is None:
-                messagebox.showwarning("用户名不规范", "请输入3-16位大小写字母或者下换线的组合作为用户名")
+                messagebox.showwarning("用户名不规范", "请输入正确的中文姓名作为用户名")
                 return False
-            if not (gender.get() == "男" or gender == "女"):
+            if gender.get() != "男" and gender.get() != "女":
                 messagebox.showwarning("性别输入不规范", '请输入“男”或者“女”。')
                 return False
             # 检查电话号码规范
@@ -111,7 +111,8 @@ class Match:
             # 数据合法
             # 接下来开始向数据库上传数据
             # 首先包装好用户信息
-            t = (None, username.get(), gender.get(), org.get(), phone.get(), email.get())  # 包装好用户信息
+            local_gender = "M" if gender.get() == "男" else "F"
+            t = (None, username.get(), local_gender, org.get(), phone.get(), email.get())  # 包装好用户信息
             u = make_user(t)
             interface = Interface()
             ret_uid = interface.insert_user(u)  # 添加用户
@@ -482,6 +483,7 @@ class Match:
             # 数据合法，提交信息
             interface = Interface()
             interface.insert_relation(local_uid.get(), local_pid.get())
+            messagebox.showinfo("添加成功", "绑定信息添加成功")
 
         # 创建本地变量
         local_uid = tk.StringVar()
@@ -765,9 +767,15 @@ class Match:
             remark_text = text_remark_data.get("1.0", tk.END)
             print(f"test-code >> 车牌备注信息是：{remark_text}")
             interface = Interface()
-            ret_pid = interface.insert_insert_plate(self.var_plate_number.get(), remark_text)
+            ret_pid = None
+            try:
+                ret_pid = interface.insert_insert_plate(self.var_plate_number.get(), remark_text)
+            except Exception as e:
+                print(f"添加车牌信息出现错误:{e}")
+                messagebox.showwarning("添加出错", "添加车牌出错，车牌已存在。")
             if ret_pid is not None:
                 messagebox.showinfo("车牌信息添加完成", f"车牌ID为{ret_pid}，请牢记。")
+            top_register_plate.destroy()
 
         # 创建子窗口
         top_register_plate = tk.Toplevel()
