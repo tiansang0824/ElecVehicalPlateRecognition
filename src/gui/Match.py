@@ -492,6 +492,8 @@ class Match:
             # 数据合法，提交信息
             interface = Interface()
             interface.insert_relation(local_uid.get(), local_pid.get())
+            interface.insert_record(self.admin_username, RecordType.ADD_RELATION,
+                                    f"通过顶部菜单栏添加了{local_uid.get()}和{local_pid.get()}的绑定关系")
             messagebox.showinfo("添加成功", "绑定信息添加成功")
 
         # 创建本地变量
@@ -557,6 +559,9 @@ class Match:
             ret_info = interface.quick_add_relation(u, p)
             # 返回执行结果
             print(f"test code >> 快速添加功能添加结果为：{ret_info}")
+            # 追踪记录
+            interface.insert_record(self.admin_username, RecordType.QUICK_ADD,
+                                    f"快速添加了用户{ret_info[0]}和车牌{ret_info[1]}，关系id为{ret_info[2]}")
             # 提示信息
             messagebox.showinfo("处理结果",
                                 f"被添加的用户uid为：{ret_info[0]}\n被添加的车牌pid为：{ret_info[1]}"
