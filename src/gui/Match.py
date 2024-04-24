@@ -124,7 +124,7 @@ class Match:
             print(f"test code >> GUI菜单功能添加用户返回uid：{ret_uid}")
             if ret_uid is not None:
                 messagebox.showinfo("添加成功", f"新用户ID为{ret_uid}，请牢记。")
-                interface.insert_record(self.admin_username, RecordType.ADD_USER, f"通过菜单栏选项添加了新用户，用户id为：{ret_uid}")
+                interface.insert_record(self.admin_username, RecordType.ADD_USER, f"通过顶部菜单栏选项添加了新用户，用户id为：{ret_uid}")
             top_register_user.destroy()
 
         """ 接下来是保存信息的变量 """
@@ -227,7 +227,7 @@ class Match:
             print(f"test code >> 添加车牌的返回结果ID为：{ret_pid}")
             if ret_pid is not None:
                 messagebox.showinfo("车牌信息添加完成", f"车牌ID为{ret_pid}，请牢记。")
-                interface.insert_record(self.admin_username, RecordType.ADD_PLATE, f"通过菜单栏添加车牌信息：{ret_pid}")
+                interface.insert_record(self.admin_username, RecordType.ADD_PLATE, f"通过顶部菜单栏添加车牌信息：{ret_pid}")
             top_register_plate.destroy()
 
         pnum = tk.StringVar()
@@ -286,6 +286,7 @@ class Match:
             interface = Interface()
             u = interface.select_userinfo(local_uid_data)
             u.print_user_info()
+            interface.insert_record(self.admin_username, RecordType.CHECK_USER, f"通过顶部菜单栏搜索用户：{local_uid_data}")
             # 最后显示用户信息
             local_username.set(u.uname)
             local_gender.set("男" if u.gender == Gender.Gender.MALE else "女")
@@ -411,6 +412,7 @@ class Match:
             # 接下来连接数据库搜索数据
             interface = Interface()
             p = interface.select_plate_info(pid)  # 搜索pid
+            interface.insert_record(self.admin_username, RecordType.CHECK_PLATE, f"通过顶部菜单栏搜索车牌信息：{pid}")
             # 然后显示数据
             local_pnum.set(p.pnum)
             local_remark.set(p.remark)
