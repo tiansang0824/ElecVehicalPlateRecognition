@@ -49,8 +49,8 @@ class MyDivide(object):
             self.img = cv2.resize(self.img, (360 * y // x, 360))
 
         # 测试代码，输出读取到的原始图片
-        cv2.imshow('original image', self.img)
-        cv2.waitKey(0)
+        # cv2.imshow('original image', self.img)
+        # cv2.waitKey(0)
 
     def bgr2gray(self):
         """
@@ -59,8 +59,8 @@ class MyDivide(object):
         """
         self.gray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
 
-        cv2.imshow('gray image', self.gray)  # 测试代码，输出灰度图
-        cv2.waitKey(0)  # waitKey
+        # cv2.imshow('gray image', self.gray)  # 测试代码，输出灰度图
+        # cv2.waitKey(0)  # waitKey
 
         return self.gray
 
@@ -75,8 +75,8 @@ class MyDivide(object):
 
         # ret, self.binary = cv2.threshold(self.gray, 127, 255, cv2.THRESH_BINARY_INV)
 
-        cv2.imshow('binary image', self.binary)  # 测试代码：输出二值图
-        cv2.waitKey(0)  # waitKey
+        # cv2.imshow('binary image', self.binary)  # 测试代码：输出二值图
+        # cv2.waitKey(0)  # waitKey
 
         return self.binary
 
@@ -95,8 +95,8 @@ class MyDivide(object):
         self.len_x = self.data.shape[0]  # 这行代码获取到了data数组的第一维的长度，并将其存储在self.len_x中。
         self.len_y = self.data.shape[1]  # 这行代码获取到了data数组的第二维的长度，并将其存储在self.len_y中。
 
-        print(f'data: {self.data}')  # 测试代码，输出转化后的数组
-        print(f'len_x: {self.len_x}, len_y: {self.len_y}')  # 测试代码，输出数组的长宽
+        # print(f'data: {self.data}')  # 测试代码，输出转化后的数组
+        # print(f'len_x: {self.len_x}, len_y: {self.len_y}')  # 测试代码，输出数组的长宽
 
         return self.data
 
@@ -166,8 +166,8 @@ class MyDivide(object):
         start_row = self.row_pairs[0][0]  # 起始行
         end_row = self.row_pairs[0][1]  # 结束行
         binary_copy = binary_copy[start_row:end_row, :]  # 获取垂直分割后的含有字符的行集合
-        cv2.imshow('binary_copy, contains string', binary_copy)
-        cv2.waitKey(0)
+        # cv2.imshow('binary_copy, contains string', binary_copy)
+        # cv2.waitKey(0)
         """
         到这里为止，binary_copy就是只含有字符的行集合组成的图片。
         接下来裁剪每个字符所在的列
@@ -255,8 +255,8 @@ class MyDivide(object):
             # 从临时图片中裁剪字符区域
             tmp_image = self.img[self.row_pairs[0][0]:self.row_pairs[0][1],
                         self.col_pairs[i][0] - 1:self.col_pairs[i][1] + 1]
-            cv2.imshow(f'test_char: {i}', tmp_image)  # 测试代码
-            cv2.waitKey(0)  # 测试代码
+            # cv2.imshow(f'test_char: {i}', tmp_image)  # 测试代码
+            # cv2.waitKey(0)  # 测试代码
             # 确保目标文件夹存在
             os.makedirs(self.dividePath, exist_ok=True)
             # 合成保存路径
@@ -283,9 +283,9 @@ class MyDivide(object):
 
         tmp_image = self.binary[self.row_pairs[0][0] - 5:self.row_pairs[0][1] + 5, left_value: right_value]
         """
-        cv2.imshow('test: string area', tmp_image)
-        cv2.waitKey(0)
-        cv2.imwrite(self.dividePath + f'{self.imgName}-string.jpg', tmp_image)
+        # cv2.imshow('test: string area', tmp_image)
+        # cv2.waitKey(0)
+        # cv2.imwrite(self.dividePath + f'{self.imgName}-string.jpg', tmp_image)
 
     def show_details(self):
         cv2.imshow("img", self.img)  # 展示图片

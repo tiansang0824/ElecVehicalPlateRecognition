@@ -140,10 +140,10 @@ class Interface:
         # 找到车牌位置
         img = self.unit_position.get_profile()
         # 输出处理过程
-        self.unit_position.get_details()  # 过程测试代码
+        # self.unit_position.get_details()  # 过程测试代码
         # 展示图片
-        cv2.imshow("plate area after process 1", img)
-        cv2.waitKey()  # 避免cv展示图片闪退
+        # cv2.imshow("plate area after process 1", img)
+        # cv2.waitKey()  # 避免cv展示图片闪退
         # 旋转车牌区域图片
         img = self.unit_position.Rotate()
         # 车牌图片去噪声
@@ -151,11 +151,11 @@ class Interface:
         # 新图片重新获取车牌区域
         img = self.unit_position.get_profile()
         # 输出处理过程
-        self.unit_position.get_details()  # 过程测试代码
+        # self.unit_position.get_details()  # 过程测试代码
         # 展示图片  # 过程测试代码
-        cv2.imshow("plate area after process 2", img)
-        cv2.waitKey()
-        cv2.destroyAllWindows()
+        # cv2.imshow("plate area after process 2", img)
+        # cv2.waitKey()
+        # cv2.destroyAllWindows()
         # 保存图片
         self.unit_position.save()
         # 接下来做字符分割
