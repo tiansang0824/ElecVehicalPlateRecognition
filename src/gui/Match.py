@@ -42,8 +42,11 @@ class Match:
     file_path = None  # 用于保存图片路径
     photo_image = None
 
-    def __init__(self, master=None):
+    admin_username:str = None
+
+    def __init__(self, master=None, admin_user=None):
         self.root = master
+        self.admin_username=admin_user
         self.root.title("车牌识别系统")
         self.root.geometry("860x500+100+100")
         self.root.resizable(False, False)

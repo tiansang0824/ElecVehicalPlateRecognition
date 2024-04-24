@@ -20,6 +20,9 @@ class Login:
     btn_ok = None  # ok按钮
     btn_quit = None  # 退出按钮
 
+    #####################
+    admin_username: str = None
+
     def __init__(self, master=None):
         self.root = master
         self.root.title("管理员登录")
@@ -56,8 +59,9 @@ class Login:
         interface = Interface()  # 创建接口
         existed_user = interface.interface_login(username, password)  # 判断用户是否存在
         if existed_user:
+            self.admin_username = username
             self.frm.destroy()
-            Match(self.root)
+            Match(master=self.root, admin_user = self.admin_username)
         else:
             messagebox.showerror("用户不存在", "用户不存在，检查输入数据！")
 
