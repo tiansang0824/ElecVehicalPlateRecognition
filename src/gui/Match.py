@@ -646,25 +646,42 @@ class Match:
         用于搜索和展示操作记录
         :return:
         """
+
+        def copy_to_clipboard(event):
+            # 获取当前选中的行
+            selection = lbox1.curselection()
+            if selection:
+                # 获取选中行的索引
+                index = selection[0]
+                # 获取该行的内容
+                content = lbox1.get(index)
+                # 将内容复制到剪贴板
+                self.root.clipboard_clear()
+                self.root.clipboard_append(content)
+                messagebox.showinfo("Info", "内容已复制到剪贴板！")
+
         # 先获取操作记录数据
         interface = Interface()
         op_records = interface.select_records()
+
         # 然后创建子窗口
         top_show_op_records = tk.Toplevel()
         top_show_op_records.title("操作记录表")
-        top_show_op_records.geometry("600x400+100+100")
+        top_show_op_records.geometry("800x600+100+100")
         top_show_op_records.resizable(False, False)
         top_show_op_records.transient(self.root)
-        top_show_op_records.grab_set()  # 禁止
+        top_show_op_records.grab_set()  # 禁止在主窗体操作
         # 绘制界面
         scr1 = ttk.Scrollbar(top_show_op_records)  # 竖直滚动条
         scr1.pack(side='right', fill='y')  # 靠右
         scr2 = ttk.Scrollbar(top_show_op_records, orient="horizontal")  # 水平滚动条
         scr2.pack(side='bottom', fill='x')  # 靠底
-        lbox1 = tk.Listbox(top_show_op_records, width=580, height=380)
+        lbox1 = tk.Listbox(top_show_op_records, width=580, height=380, font=("微软雅黑", 12))
+        # 绑定鼠标左键点击事件到 copy_to_clipboard 函数
+        lbox1.bind('<Double-Button-1>', copy_to_clipboard)
         lbox1.pack()
-        lbox1.insert(tk.END, '想看完整的文本，请用水平滚动条来帮你')
-        lbox1.insert(tk.END, '操作编号 操作人 操作类型 详细内容及时间')
+        lbox1.insert(tk.END, '以下是操作记录，双击可以复制信息内容。')
+        lbox1.insert(tk.END, '数据显示案例：“操作编号 操作人 操作类型 详细内容 {操作时间}”。')
         for record in op_records:
             lbox1.insert(tk.END, record)
         # lbox1.insert(tk.END, op_records)  # 插入元组
