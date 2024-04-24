@@ -6,6 +6,7 @@ import re
 from tkinter import messagebox
 from src.base.Interface import Interface
 from src.MyBeans import User, Plate, Relation, Gender
+from src.MyBeans.RecordType import RecordType
 
 
 def make_user(result: tuple) -> User:
@@ -42,7 +43,7 @@ class Match:
     file_path = None  # 用于保存图片路径
     photo_image = None
 
-    admin_username: str = None
+    admin_username: str = None  # 标记当前的登录者
 
     def __init__(self, master=None, admin_user=None):
         self.root = master
@@ -679,8 +680,9 @@ class Match:
         用来调用统一接口的一键识别函数
         :return:
         """
-        # 创建接口对象
+        # 创建接口层实例
         interface = Interface()
+        # 调用识别模块
         identify_ret = interface.interface_identify(self.file_path)  # 调用统一接口执行车牌识别，并且获得返回值
         print(f"车牌区域图片的绝对地址为：{identify_ret}")
         # 获得了识别结果后，下一步就是将识别结果的图片和字符串打印到界面中
@@ -693,6 +695,8 @@ class Match:
         self.right_img_label.image = right_shown_img
         # 设置显示字符
         self.var_plate_number.set(plate_number)
+        # 保留搜索记录
+        interface.insert_record(self.admin_username, RecordType.IDENTIFY, f"搜索车牌信息,车牌号码：{plate_number}")
 
     def fun_copy_label(self, event):
         self.root.clipboard_clear()
