@@ -717,6 +717,7 @@ class Match:
             messagebox.showwarning("搜索失败", "用户信息搜索失败")
             return
         print(f"查询到的车主信息: {master_info}")
+
         # 现在的master_info是一个User类型的对象
         # 接下来创建Topleve窗口显示User信息
         top_master_info = tk.Toplevel()
@@ -763,6 +764,9 @@ class Match:
         label_phone.grid(row=4, column=1, padx=5, pady=5)
         label_email.grid(row=5, column=1, padx=5, pady=5)
         label_plate.grid(row=6, column=1, padx=5, pady=5)
+        # print(f">> 车牌号码：{self.var_plate_number.get()}")
+        interface.insert_record(self.admin_username, RecordType.CHECK_USER,
+                                f"通过车牌号码{self.var_plate_number.get()}查询车主{master_info.uname}")
 
     def fun_register_plate(self):
         """
