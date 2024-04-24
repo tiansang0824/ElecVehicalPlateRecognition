@@ -88,6 +88,17 @@ class DBConnector:
             print(">> 记录信息添加失败")
             return False
 
+    def select_records(self):
+        """
+        该函数用于搜索和返回数据库操作记录
+        :return:
+        """
+        sql = f"select * from t_record order by op_date desc"
+        self._cursor.execute(sql)
+        result = self._cursor.fetchall()
+        print(result)
+        return result
+
     def select_user_by_phone(self, phone):
         sql = f"select * from t_user where phone = '{phone}'"
         self._cursor.execute(sql)
@@ -356,3 +367,6 @@ if __name__ == '__main__':
         """
 
     con.add_record("admin", record_type=RecordType.ADD_RELATION, backup="测试内容")
+    records = con.select_records()
+    for record in records:
+        print(record[4])

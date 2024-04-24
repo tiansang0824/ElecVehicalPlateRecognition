@@ -97,6 +97,9 @@ class Interface:
         """
         self.unit_dbcon.add_relation(uid, pid)
 
+    def select_records(self):
+        return self.unit_dbcon.select_records()
+
     def select_userinfo(self, uid: str) -> User:
         return self.unit_dbcon.select_user_by_uid(uid)
 

@@ -640,6 +640,36 @@ class Match:
         btn_check.grid(row=5, column=2, sticky="w", padx=(20, 3))
         btn_commit.grid(row=5, column=2, sticky="e", padx=(5, 0))
 
+
+    def show_records(self):
+        """
+        用于搜索和展示操作记录
+        :return:
+        """
+        # 先获取操作记录数据
+        interface = Interface()
+        op_records = interface.select_records()
+        # 然后创建子窗口
+        top_show_op_records = tk.Toplevel()
+        top_show_op_records.title("操作记录表")
+        top_show_op_records.geometry("600x400+100+100")
+        top_show_op_records.resizable(False, False)
+        top_show_op_records.transient(self.root)
+        top_show_op_records.grab_set()  # 禁止
+        # 绘制界面
+        scr1 = ttk.Scrollbar(top_show_op_records)  # 竖直滚动条
+        scr1.pack(side='right', fill='y')  # 靠右
+        scr2 = ttk.Scrollbar(top_show_op_records, orient="horizontal")  # 水平滚动条
+        scr2.pack(side='bottom', fill='x')  # 靠底
+        lbox1 = tk.Listbox(top_show_op_records, width=580, height=380)
+        lbox1.pack()
+        lbox1.insert(tk.END, '想看完整的文本，请用水平滚动条来帮你')
+        lbox1.insert(tk.END, '操作编号 操作人 操作类型 详细内容及时间')
+        for record in op_records:
+            lbox1.insert(tk.END, record)
+        # lbox1.insert(tk.END, op_records)  # 插入元组
+
+
     def create_menubar(self):
         """ 创建顶部菜单栏的函数
         """
@@ -680,9 +710,11 @@ class Match:
         total_menubar.add_cascade(label="绑定", menu=register_menu)
         register_menu.add_command(label="绑定人车关系", command=self.menu_add_relation)
         register_menu.add_command(label="快速添加", command=self.menu_quick_add_relation)
-        """ 创建“绑定”菜单 """
-        register_menu = tk.Menu(total_menubar, tearoff=0)
-        total_menubar.add_command(label="关于(产品)", command=self.menu_about_product)
+        """ 创建“其他”菜单 """
+        other_menu = tk.Menu(total_menubar, tearoff=0)
+        total_menubar.add_cascade(label="其他内容", menu=other_menu)
+        other_menu.add_command(label="操作记录", command=self.show_records)
+        other_menu.add_command(label="关于产品", command=self.menu_about_product)
 
     def fun_identify(self):
         """
