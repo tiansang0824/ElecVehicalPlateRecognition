@@ -137,6 +137,24 @@ class DBConnector:
             # 查到了内容，目标车牌存在
             return True
 
+    def check_admin_exists(self, username: str) -> bool:
+        sql = f"select a.* from t_admin a where a.username='{username}';"
+        self._cursor.execute(sql)
+        result = self._cursor.fetchall()
+        if len(result) == 0:
+            return False
+        else:
+            return True
+
+    def add_admin(self, admin_info: list) -> bool:
+        sql = f"insert into t_admin values('{admin_info[0]}', '{admin_info[1]}')"
+        try:
+            self._cursor.execute(sql)
+            self._conn.commit()
+            return True
+        except Exception as e:
+            return False
+
     def add_user(self, user_info: User) -> int:
         """
         添加用户信息，返回新用户uid

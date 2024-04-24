@@ -58,6 +58,10 @@ class Interface:
         print(select_result)
         return select_result
 
+    def insert_admin(self, admin_info: list) -> bool:
+        success = self.unit_dbcon.add_admin(admin_info)
+        return success
+
     def insert_user(self, user_info: User):
         ret_uid = self.unit_dbcon.add_user(user_info)
         return ret_uid
@@ -120,6 +124,15 @@ class Interface:
         rid = self.unit_dbcon.add_relation(uid, pid)
         # 返回uid、pid、rid
         return (uid, pid, rid)
+
+    def check_admin_exists(self, username:str)->bool:
+        """
+
+        :param admin_info: 第一个参数是用户名，第二个是密码
+        :return:
+        """
+        ret = self.unit_dbcon.check_admin_exists(username)
+        return ret
 
     def interface_identify(self, file_path: str):
         """
