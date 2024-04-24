@@ -6,6 +6,7 @@ import re
 from tkinter import messagebox
 from src.base.Interface import Interface
 from src.MyBeans import User, Plate, Relation, Gender
+from src.MyBeans.RecordType import RecordType
 
 
 def make_user(result: tuple) -> User:
@@ -42,8 +43,12 @@ class Match:
     file_path = None  # 用于保存图片路径
     photo_image = None
 
-    def __init__(self, master=None):
+    admin_username: str = None  # 标记当前的登录者
+
+    def __init__(self, master=None, admin_user=None):
         self.root = master
+        self.admin_username = admin_user
+        print(f">> 此时登录的管理员为：{self.admin_username}")
         self.root.title("车牌识别系统")
         self.root.geometry("860x500+100+100")
         self.root.resizable(False, False)
@@ -119,6 +124,7 @@ class Match:
             print(f"test code >> GUI菜单功能添加用户返回uid：{ret_uid}")
             if ret_uid is not None:
                 messagebox.showinfo("添加成功", f"新用户ID为{ret_uid}，请牢记。")
+                interface.insert_record(self.admin_username, RecordType.ADD_USER, f"通过顶部菜单栏选项添加了新用户，用户id为：{ret_uid}")
             top_register_user.destroy()
 
         """ 接下来是保存信息的变量 """
@@ -221,6 +227,7 @@ class Match:
             print(f"test code >> 添加车牌的返回结果ID为：{ret_pid}")
             if ret_pid is not None:
                 messagebox.showinfo("车牌信息添加完成", f"车牌ID为{ret_pid}，请牢记。")
+                interface.insert_record(self.admin_username, RecordType.ADD_PLATE, f"通过顶部菜单栏添加车牌信息：{ret_pid}")
             top_register_plate.destroy()
 
         pnum = tk.StringVar()
@@ -279,6 +286,7 @@ class Match:
             interface = Interface()
             u = interface.select_userinfo(local_uid_data)
             u.print_user_info()
+            interface.insert_record(self.admin_username, RecordType.CHECK_USER, f"通过顶部菜单栏搜索用户：{local_uid_data}")
             # 最后显示用户信息
             local_username.set(u.uname)
             local_gender.set("男" if u.gender == Gender.Gender.MALE else "女")
@@ -404,6 +412,7 @@ class Match:
             # 接下来连接数据库搜索数据
             interface = Interface()
             p = interface.select_plate_info(pid)  # 搜索pid
+            interface.insert_record(self.admin_username, RecordType.CHECK_PLATE, f"通过顶部菜单栏搜索车牌信息：{pid}")
             # 然后显示数据
             local_pnum.set(p.pnum)
             local_remark.set(p.remark)
@@ -483,6 +492,8 @@ class Match:
             # 数据合法，提交信息
             interface = Interface()
             interface.insert_relation(local_uid.get(), local_pid.get())
+            interface.insert_record(self.admin_username, RecordType.ADD_RELATION,
+                                    f"通过顶部菜单栏添加了{local_uid.get()}和{local_pid.get()}的绑定关系")
             messagebox.showinfo("添加成功", "绑定信息添加成功")
 
         # 创建本地变量
@@ -548,6 +559,9 @@ class Match:
             ret_info = interface.quick_add_relation(u, p)
             # 返回执行结果
             print(f"test code >> 快速添加功能添加结果为：{ret_info}")
+            # 追踪记录
+            interface.insert_record(self.admin_username, RecordType.QUICK_ADD,
+                                    f"快速添加了用户{ret_info[0]}和车牌{ret_info[1]}，关系id为{ret_info[2]}")
             # 提示信息
             messagebox.showinfo("处理结果",
                                 f"被添加的用户uid为：{ret_info[0]}\n被添加的车牌pid为：{ret_info[1]}"
@@ -626,6 +640,53 @@ class Match:
         btn_check.grid(row=5, column=2, sticky="w", padx=(20, 3))
         btn_commit.grid(row=5, column=2, sticky="e", padx=(5, 0))
 
+
+    def show_records(self):
+        """
+        用于搜索和展示操作记录
+        :return:
+        """
+
+        def copy_to_clipboard(event):
+            # 获取当前选中的行
+            selection = lbox1.curselection()
+            if selection:
+                # 获取选中行的索引
+                index = selection[0]
+                # 获取该行的内容
+                content = lbox1.get(index)
+                # 将内容复制到剪贴板
+                self.root.clipboard_clear()
+                self.root.clipboard_append(content)
+                messagebox.showinfo("Info", "内容已复制到剪贴板！")
+
+        # 先获取操作记录数据
+        interface = Interface()
+        op_records = interface.select_records()
+
+        # 然后创建子窗口
+        top_show_op_records = tk.Toplevel()
+        top_show_op_records.title("操作记录表")
+        top_show_op_records.geometry("800x600+100+100")
+        top_show_op_records.resizable(False, False)
+        top_show_op_records.transient(self.root)
+        top_show_op_records.grab_set()  # 禁止在主窗体操作
+        # 绘制界面
+        scr1 = ttk.Scrollbar(top_show_op_records)  # 竖直滚动条
+        scr1.pack(side='right', fill='y')  # 靠右
+        scr2 = ttk.Scrollbar(top_show_op_records, orient="horizontal")  # 水平滚动条
+        scr2.pack(side='bottom', fill='x')  # 靠底
+        lbox1 = tk.Listbox(top_show_op_records, width=580, height=380, font=("微软雅黑", 12))
+        # 绑定鼠标左键点击事件到 copy_to_clipboard 函数
+        lbox1.bind('<Double-Button-1>', copy_to_clipboard)
+        lbox1.pack()
+        lbox1.insert(tk.END, '以下是操作记录，双击可以复制信息内容。')
+        lbox1.insert(tk.END, '数据显示案例：“操作编号 操作人 操作类型 详细内容 {操作时间}”。')
+        for record in op_records:
+            lbox1.insert(tk.END, record)
+        # lbox1.insert(tk.END, op_records)  # 插入元组
+
+
     def create_menubar(self):
         """ 创建顶部菜单栏的函数
         """
@@ -666,17 +727,20 @@ class Match:
         total_menubar.add_cascade(label="绑定", menu=register_menu)
         register_menu.add_command(label="绑定人车关系", command=self.menu_add_relation)
         register_menu.add_command(label="快速添加", command=self.menu_quick_add_relation)
-        """ 创建“绑定”菜单 """
-        register_menu = tk.Menu(total_menubar, tearoff=0)
-        total_menubar.add_command(label="关于(产品)", command=self.menu_about_product)
+        """ 创建“其他”菜单 """
+        other_menu = tk.Menu(total_menubar, tearoff=0)
+        total_menubar.add_cascade(label="其他内容", menu=other_menu)
+        other_menu.add_command(label="操作记录", command=self.show_records)
+        other_menu.add_command(label="关于产品", command=self.menu_about_product)
 
     def fun_identify(self):
         """
         用来调用统一接口的一键识别函数
         :return:
         """
-        # 创建接口对象
+        # 创建接口层实例
         interface = Interface()
+        # 调用识别模块
         identify_ret = interface.interface_identify(self.file_path)  # 调用统一接口执行车牌识别，并且获得返回值
         print(f"车牌区域图片的绝对地址为：{identify_ret}")
         # 获得了识别结果后，下一步就是将识别结果的图片和字符串打印到界面中
@@ -689,6 +753,8 @@ class Match:
         self.right_img_label.image = right_shown_img
         # 设置显示字符
         self.var_plate_number.set(plate_number)
+        # 保留搜索记录
+        interface.insert_record(self.admin_username, RecordType.IDENTIFY, f"搜索车牌信息,车牌号码：{plate_number}")
 
     def fun_copy_label(self, event):
         self.root.clipboard_clear()
@@ -709,6 +775,7 @@ class Match:
             messagebox.showwarning("搜索失败", "用户信息搜索失败")
             return
         print(f"查询到的车主信息: {master_info}")
+
         # 现在的master_info是一个User类型的对象
         # 接下来创建Topleve窗口显示User信息
         top_master_info = tk.Toplevel()
@@ -755,6 +822,9 @@ class Match:
         label_phone.grid(row=4, column=1, padx=5, pady=5)
         label_email.grid(row=5, column=1, padx=5, pady=5)
         label_plate.grid(row=6, column=1, padx=5, pady=5)
+        # print(f">> 车牌号码：{self.var_plate_number.get()}")
+        interface.insert_record(self.admin_username, RecordType.CHECK_USER,
+                                f"通过车牌号码{self.var_plate_number.get()}查询车主{master_info.uname}")
 
     def fun_register_plate(self):
         """
@@ -847,7 +917,7 @@ class Match:
         self.left_img_label.image = left_shown_img
         self.left_img_label.pack(pady=(10, 0))
         # 创建右侧图片
-        right_shown_img = Image.open("../product_img/app_logo.jpg")
+        right_shown_img = Image.open("../product_img/app_logo_right.png")
         right_shown_img = ImageTk.PhotoImage(right_shown_img.resize((300, 150)))
         right_img_style = ttk.Style()
         right_img_style.configure("rightImgLabel.TLabel", width="300", height="150",

@@ -27,6 +27,7 @@
 """
 from pymysql import Connection
 from src.MyBeans.Gender import Gender
+from src.MyBeans.RecordType import RecordType
 from src.MyBeans.User import User
 from src.MyBeans.Plate import Plate
 from src.MyBeans.Relation import Relation
@@ -66,6 +67,37 @@ class DBConnector:
             database=database
         )
         self._cursor = self._conn.cursor()
+
+    def add_record(self, admin_username: str, record_type: RecordType, backup: str)->bool:
+        """
+        用于向记录表中添加操作记录
+        :param admin_username: 操作者的用户名
+        :param record_type: 记录操作类型
+        :param backup: 记录附注信息，这个信息应该来自上一层，这里只要如实传入即可。
+        :return:
+        """
+        print(f">> DBConnector层级：打印记录类型：{record_type.value}")
+        try:
+            sql = (f"insert into t_record(operator, record_type, backup, op_date) "
+                   f"values('{admin_username}', '{record_type.value}', '{backup}', now());")
+            self._cursor.execute(sql)  # 执行备注
+            self._conn.commit()  # 提交事务
+            print(">> 记录信息添加完成")
+            return True
+        except Exception as e:
+            print(">> 记录信息添加失败")
+            return False
+
+    def select_records(self):
+        """
+        该函数用于搜索和返回数据库操作记录
+        :return:
+        """
+        sql = f"select * from t_record order by op_date desc"
+        self._cursor.execute(sql)
+        result = self._cursor.fetchall()
+        print(result)
+        return result
 
     def select_user_by_phone(self, phone):
         sql = f"select * from t_user where phone = '{phone}'"
@@ -313,7 +345,7 @@ if __name__ == '__main__':
     # 测试通过pid搜索车牌信息
     ret = con.select_plate_by_pid("20001")
     print(f"test code >> 通过pid搜索车牌信息：{ret}")
-    """
+
     # 测试检查用户和车牌是否存在的函数是否可用
     # 首先创建用户
     u = User("田桑", Gender.FEMALE, "用户信息演示", "15703417063", "tiansang@163.com")
@@ -331,4 +363,10 @@ if __name__ == '__main__':
     # 测试添加关系的函数是否返回rid
     print(f"测试添加关系函数的返回值：{con.add_relation(10030, 20010)}")
     print(f"测试添加关系函数的返回值：{con.add_relation(10021, 20009)}")
+    
+        """
 
+    con.add_record("admin", record_type=RecordType.ADD_RELATION, backup="测试内容")
+    records = con.select_records()
+    for record in records:
+        print(record[4])

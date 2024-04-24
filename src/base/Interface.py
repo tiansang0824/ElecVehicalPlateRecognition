@@ -4,6 +4,7 @@ Interface 类，用于存储GUI界面操作中需要使用到的所有内容。
 GUI 界面的每个功能都对应 interface 中的一个函数，通过一对一调用函数来直接实现 GUI 的功能。
 """
 from src.MyBeans import User, Gender, Relation, Plate
+from src.MyBeans.RecordType import RecordType
 from src.function import Position, Divide, Match
 import src.base.DBConnector as db
 import matplotlib as plt
@@ -19,6 +20,9 @@ class Interface:
     unit_divide = None  # 保存一个字符分割实例
     unit_match = None  # 保存一个字符匹配实例
     unit_dbcon = None  # 保存一个数据库连接模组实例
+
+    # 全局变量：操作记录种类
+    # RECORDE_ADD_PLATE
 
     def __init__(self):
         """
@@ -58,6 +62,9 @@ class Interface:
         print(select_result)
         return select_result
 
+    def insert_record(self, admin_username: str, record_type: RecordType, backup: str):
+        self.unit_dbcon.add_record(admin_username, record_type, backup)
+
     def insert_admin(self, admin_info: list) -> bool:
         success = self.unit_dbcon.add_admin(admin_info)
         return success
@@ -89,6 +96,9 @@ class Interface:
         :return:
         """
         self.unit_dbcon.add_relation(uid, pid)
+
+    def select_records(self):
+        return self.unit_dbcon.select_records()
 
     def select_userinfo(self, uid: str) -> User:
         return self.unit_dbcon.select_user_by_uid(uid)
