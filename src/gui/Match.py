@@ -917,7 +917,7 @@ class Match:
         self.left_img_label.image = left_shown_img
         self.left_img_label.pack(pady=(10, 0))
         # 创建右侧图片
-        right_shown_img = Image.open("../product_img/app_logo.jpg")
+        right_shown_img = Image.open("../product_img/app_logo_right.png")
         right_shown_img = ImageTk.PhotoImage(right_shown_img.resize((300, 150)))
         right_img_style = ttk.Style()
         right_img_style.configure("rightImgLabel.TLabel", width="300", height="150",
