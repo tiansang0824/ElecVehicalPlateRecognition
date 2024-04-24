@@ -20,6 +20,9 @@ class Interface:
     unit_match = None  # 保存一个字符匹配实例
     unit_dbcon = None  # 保存一个数据库连接模组实例
 
+    # 全局变量：操作记录种类
+    # RECORDE_ADD_PLATE
+
     def __init__(self):
         """
         创建接口构造器
