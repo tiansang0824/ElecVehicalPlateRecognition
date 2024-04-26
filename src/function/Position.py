@@ -203,7 +203,7 @@ class MyPosition:
             if x1 == x2 or y1 == y2:
                 continue
             t = float(y2 - y1) / (x2 - x1)
-            rotate_angle = math.degrees(math.atan(t))
+            rotate_angle = math.degrees(math.atan(t))  # 使用反正切函数计算斜率的弧度，并将其转换为角度。
             # 根据斜率的值，函数确定需要旋转的角度。
             # 如果角度大于45度，则将其调整为-90加上原始角度。
             # 如果角度小于-45度，则将其调整为90加上原始角度。
