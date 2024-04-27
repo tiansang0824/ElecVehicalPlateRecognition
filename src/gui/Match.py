@@ -428,7 +428,7 @@ class Match:
         local_remark = tk.StringVar()
         # 创建子窗口
         top_query_plate = tk.Toplevel()
-        top_query_plate.title("用户信息搜索")
+        top_query_plate.title("车牌信息搜索")
         top_query_plate.geometry("400x300+100+100")
         top_query_plate.resizable(False, False)
         top_query_plate.transient(self.root)
@@ -849,7 +849,7 @@ class Match:
 
         # 创建子窗口
         top_register_plate = tk.Toplevel()
-        top_register_plate.title("用户信息搜索")
+        top_register_plate.title("车牌信息登记")
         top_register_plate.geometry("400x300+100+100")
         top_register_plate.resizable(False, False)
         top_register_plate.transient(self.root)
